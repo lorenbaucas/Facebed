@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "182714962194",
+    "project_id": "facebed-app",
+    "storage_bucket": "facebed-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:182714962194:android:d22ec2167d096c7492e3cb",
+        "android_client_info": {
+          "package_name": "com.facebed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "182714962194-lmqt3pmdmhmqjqcflfdpp3rql0kemlsp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.facebed",
+            "certificate_hash": "3cddb698aec50ee0cdee921204ece4a3c1857724"
+          }
+        },
+        {
+          "client_id": "182714962194-55q1uderpr4ba9kq899koqnmff5f889d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnn0DlR2oOaZ6reusE1uBYQm8LP2iSp-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "182714962194-55q1uderpr4ba9kq899koqnmff5f889d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

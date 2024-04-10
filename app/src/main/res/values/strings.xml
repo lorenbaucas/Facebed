@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Facebed</string>
+    <string name="sign_in_with_google"></string>
+    <string name="welcome_toast"></string>
+</resources>
