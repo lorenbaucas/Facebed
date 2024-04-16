@@ -1,44 +1,88 @@
 package com.facebed
 
+import android.app.ActivityOptions
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Shader
 import androidx.credentials.CredentialManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 import java.util.UUID
 
-class SignInActivity : ComponentActivity() {
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
-    private lateinit var sharedPreferences: SharedPreferences
+object CredentialManagerSingleton {
+    lateinit var credentialManager: CredentialManager
+}
+
+class SignInActivity : AppCompatActivity() {
+    private lateinit var spSignIn: SharedPreferences
+
+    private lateinit var emailText: AutoCompleteTextView
+    private lateinit var passwordText: AutoCompleteTextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.sign_in_activity)
-        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        enableEdgeToEdge()
+
+        spSignIn = getSharedPreferences("SignIn", Context.MODE_PRIVATE)
+        // Initialize the credentialManager property
+        CredentialManagerSingleton.credentialManager = CredentialManager.create(this@SignInActivity)
+
+        emailText = findViewById(R.id.email_text)
+        passwordText = findViewById(R.id.password_text)
+
+        // Linear Gradient for the title
+        val appTitle: TextView = findViewById(R.id.app_title)
+        val width = appTitle.paint.measureText(appTitle.text.toString())
+        val textShader: Shader = LinearGradient(0f, 0f, width, appTitle.textSize, intArrayOf(
+            Color.parseColor("#F66C2C"),
+            Color.parseColor("#F6A228")
+        ), null, Shader.TileMode.REPEAT)
+        appTitle.paint.setShader(textShader)
 
         // Check if user is already signed in
-        if (sharedPreferences.getBoolean("isSignedIn", false)) {
+        if (spSignIn.getBoolean("isSignedIn", false)) {
             startActivity(Intent(this@SignInActivity, HomeActivity::class.java))
             finish() // Finish the SignInActivity to prevent user from going back
         }
 
-        val signInButton: Button = findViewById(R.id.sign_in_button)
-        signInButton.setOnClickListener {
+
+        val googleSignInButton: Button = findViewById(R.id.google_sign_in_button)
+        googleSignInButton.setOnClickListener {
             googleSignIn()
+        }
+
+        val emailSignInButton: Button = findViewById(R.id.email_sign_in_button)
+        emailSignInButton.setOnClickListener {
+            emailSignIn()
+        }
+
+        val createAccount: TextView = findViewById(R.id.text_create_account)
+        createAccount.setOnClickListener {
+            // Start the new activity and lets user go back
+            startActivity(Intent(this@SignInActivity, RegisterActivity::class.java),
+                ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
     }
 
@@ -51,7 +95,8 @@ class SignInActivity : ComponentActivity() {
 
         val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
-            .setServerClientId("182714962194-55q1uderpr4ba9kq899koqnmff5f889d.apps.googleusercontent.com")
+            .setServerClientId("182714962194-qmouil19bv70nkts9hd2cq1el7dvcc11.apps.googleusercontent.com")
+            .setAutoSelectEnabled(false)
             .setNonce(hashedNonce)
             .build()
 
@@ -59,32 +104,72 @@ class SignInActivity : ComponentActivity() {
             .addCredentialOption(googleIdOption)
             .build()
 
-        coroutineScope.launch {
+        CoroutineScope(Dispatchers.Main).launch {
             try {
-                val credentialManager = CredentialManager.create(this@SignInActivity)
-                val result = credentialManager.getCredential(
+                val result = CredentialManagerSingleton.credentialManager.getCredential(
                     request = request,
                     context = this@SignInActivity
                 )
                 val credential = result.credential
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                val googleIdToken = googleIdTokenCredential.displayName
 
-                Log.i(TAG, googleIdToken.toString())
+                // Get an AuthCredential from the Google ID token
+                val authCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
 
-                // Save the sign-in state
-                sharedPreferences.edit { putBoolean("isSignedIn", true)}
+                // Register credentials in FirebaseAuth
+                FirebaseAuth.getInstance().signInWithCredential(authCredential).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        // Save the sign-in state
+                        spSignIn.edit { putBoolean("isSignedIn", true)}
 
-                startActivity(Intent(this@SignInActivity, HomeActivity::class.java))
-                finish() // Finish the SignInActivity to prevent user from going back
+                        startActivity(Intent(this@SignInActivity, HomeActivity::class.java),
+                            ActivityOptions.makeSceneTransitionAnimation(this@SignInActivity).toBundle())
+                        finish() // Finish the SignInActivity to prevent user from going back
 
-                Toast.makeText(this@SignInActivity, getString(R.string.welcome_toast) + " " + googleIdToken, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@SignInActivity,
+                            getString(R.string.welcome_toast) + " " +
+                            googleIdTokenCredential.displayName.toString(),
+                            Toast.LENGTH_SHORT).show()
+                    } else { Toast.makeText(this@SignInActivity,
+                        getString(R.string.error), Toast.LENGTH_SHORT).show() }
+                }
+
+                Log.i(TAG, googleIdTokenCredential.displayName.toString())
+                Log.i(TAG, googleIdTokenCredential.id.toString())
+                Log.i(TAG, googleIdTokenCredential.idToken.toString())
+                Log.i(TAG, googleIdTokenCredential.familyName.toString())
+                Log.i(TAG, googleIdTokenCredential.givenName.toString())
+                Log.i(TAG, googleIdTokenCredential.phoneNumber.toString())
+                Log.i(TAG, googleIdTokenCredential.profilePictureUri.toString())
+
             } catch (e: androidx.credentials.exceptions.GetCredentialException) {
-                //Toast.makeText(this@SignInActivity, e.message, Toast.LENGTH_SHORT).show()
-                Log.i(TAG, e.message.toString())
-            } catch (e: GoogleIdTokenParsingException) {
                 Toast.makeText(this@SignInActivity, e.message, Toast.LENGTH_SHORT).show()
-            }
+            } catch (e: GoogleIdTokenParsingException) {
+                Toast.makeText(this@SignInActivity, e.message, Toast.LENGTH_SHORT).show() }
         }
+    }
+
+    private fun emailSignIn() {
+        if (emailText.text.trim().toString().isNotEmpty()) {
+            if (passwordText.text.trim().toString().isNotEmpty()) {
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(
+                    emailText.text.trim().toString(), passwordText.text.trim().toString())
+                    .addOnSuccessListener {
+                        // Save the sign-in state
+                        spSignIn.edit { putBoolean("isSignedIn", true)}
+
+                        startActivity(Intent(this@SignInActivity, HomeActivity::class.java),
+                            ActivityOptions.makeSceneTransitionAnimation(this@SignInActivity).toBundle())
+                        finish() // Finish the SignInActivity to prevent user from going back
+
+                        Toast.makeText(this, getString(R.string.welcome_toast) + " " +
+                            FirebaseAuth.getInstance().currentUser!!.displayName.toString(),
+                            Toast.LENGTH_SHORT).show()
+                    }.addOnFailureListener {
+                        Toast.makeText(this, getString(R.string.bad_credentials),
+                            Toast.LENGTH_SHORT).show()
+                }
+            } else { passwordText.error = getString(R.string.required) }
+        } else { emailText.error = getString(R.string.required) }
     }
 }
