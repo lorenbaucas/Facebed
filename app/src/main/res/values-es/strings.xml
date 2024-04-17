@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sign_in_with_google">Iniciar sesión con Google</string>
+    <string name="not_signed_in">No has iniciado sesión</string>
     <string name="register">Registrarme</string>
     <string name="create_account">Crear cuenta</string>
+    <string name="location">Ubicación</string>
     <string name="password">Contraseña</string>
     <string name="required">Obligatorio</string>
     <string name="welcome_toast">Bienvenido/a</string>
@@ -14,4 +16,6 @@
     <string name="passwords_do_not_match">Contraseñas no coinciden</string>
     <string name="error">Lo sentimos, hubo un error</string>
     <string name="valid_password">Al menos 8 caracteres incluyendo: 1 letra, 1 dígito, 1 carácter especial (._@$!#%^&amp;+=)</string>
+    <string name="are_you_a_company">"¿Eres empresa? Regístrate "</string>
+    <string name="here">aquí</string>
 </resources>

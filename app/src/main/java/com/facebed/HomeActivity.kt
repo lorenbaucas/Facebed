@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.credentials.ClearCredentialStateRequest
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,8 +24,6 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.home_activity)
 
         spSignIn = getSharedPreferences("SignIn", Context.MODE_PRIVATE)
-
-        val user = FirebaseAuth.getInstance().currentUser
 
         val buttonLogout: Button = findViewById(R.id.button_logout)
         buttonLogout.setOnClickListener {
@@ -42,24 +40,19 @@ class HomeActivity : AppCompatActivity() {
 
         val buttonDeleteAccount: Button = findViewById(R.id.button_delete_account)
         buttonDeleteAccount.setOnClickListener {
-
-            user?.delete()
-                ?.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("AQUI", "User account deleted.")
-                        // Clear the sign-in state
-                        spSignIn.edit { putBoolean("isSignedIn", false) }
-                        startActivity(Intent(this@HomeActivity, SignInActivity::class.java))
-                        finish() // Finish the HomeActivity to prevent user from going back
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w("AQUI", "deleteUser:failure", task.exception)
-                        Toast.makeText(baseContext, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
-
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null) {
+                FirebaseDatabase.getInstance().getReference("user").child(user.uid).removeValue()
+                    .addOnSuccessListener {
+                        user.delete()
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    spSignIn.edit { putBoolean("isSignedIn", false) }
+                                    startActivity(Intent(this@HomeActivity, SignInActivity::class.java))
+                                    finish()
+                                } else { Toast.makeText(baseContext, getString(R.string.error), Toast.LENGTH_SHORT).show() } } }
+                    .addOnFailureListener { Toast.makeText(baseContext, getString(R.string.error), Toast.LENGTH_SHORT).show() }
+            } else { Toast.makeText(baseContext, getString(R.string.not_signed_in), Toast.LENGTH_SHORT).show() }
         }
-
     }
 }

@@ -24,6 +24,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -84,6 +85,13 @@ class SignInActivity : AppCompatActivity() {
             startActivity(Intent(this@SignInActivity, RegisterActivity::class.java),
                 ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
+
+        val registerCompany: TextView = findViewById(R.id.text_here)
+        registerCompany.setOnClickListener {
+            // Start the new activity and lets user go back
+            startActivity(Intent(this@SignInActivity, RegisterCompanyActivity::class.java),
+                ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+        }
     }
 
     private fun googleSignIn() {
@@ -117,22 +125,33 @@ class SignInActivity : AppCompatActivity() {
                 val authCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
 
                 // Register credentials in FirebaseAuth
-                FirebaseAuth.getInstance().signInWithCredential(authCredential).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        // Save the sign-in state
-                        spSignIn.edit { putBoolean("isSignedIn", true)}
+                FirebaseAuth.getInstance().signInWithCredential(authCredential).addOnSuccessListener {authResult ->
+                    val user = FirebaseAuth.getInstance().currentUser
+                    val userId = authResult.user?.uid
+                    userId?.let {
+                        // Guarda la información del usuario en la base de datos
+                        val userData = hashMapOf(
+                            "email" to user?.email,
+                            "name" to user?.displayName,
+                            "isCompany" to false
+                        )
+                        FirebaseDatabase.getInstance().getReference("user").child(it).setValue(userData)
+                            .addOnSuccessListener {
+                                // Save the sign-in state
+                                spSignIn.edit { putBoolean("isSignedIn", true)}
 
-                        startActivity(Intent(this@SignInActivity, HomeActivity::class.java),
-                            ActivityOptions.makeSceneTransitionAnimation(this@SignInActivity).toBundle())
-                        finish() // Finish the SignInActivity to prevent user from going back
+                                startActivity(Intent(this@SignInActivity, HomeActivity::class.java),
+                                    ActivityOptions.makeSceneTransitionAnimation(this@SignInActivity).toBundle())
+                                finish() // Finish the SignInActivity to prevent user from going back
 
-                        Toast.makeText(this@SignInActivity,
-                            getString(R.string.welcome_toast) + " " +
-                            googleIdTokenCredential.displayName.toString(),
-                            Toast.LENGTH_SHORT).show()
-                    } else { Toast.makeText(this@SignInActivity,
+                                Toast.makeText(this@SignInActivity,
+                                    getString(R.string.welcome_toast) + " " + user?.displayName.toString(),
+                                    Toast.LENGTH_SHORT).show()
+
+                            }.addOnFailureListener { Toast.makeText(this@SignInActivity, getString(R.string.error), Toast.LENGTH_SHORT).show() } }
+
+                }.addOnFailureListener { Toast.makeText(this@SignInActivity,
                         getString(R.string.error), Toast.LENGTH_SHORT).show() }
-                }
 
                 Log.i(TAG, googleIdTokenCredential.displayName.toString())
                 Log.i(TAG, googleIdTokenCredential.id.toString())

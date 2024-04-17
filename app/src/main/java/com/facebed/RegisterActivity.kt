@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var spSignIn: SharedPreferences
@@ -68,25 +69,36 @@ class RegisterActivity : AppCompatActivity() {
                             FirebaseAuth.getInstance().createUserWithEmailAndPassword(
                                 emailText.text.trim().toString(),
                                 passwordText.text.trim().toString()
-                            ).addOnSuccessListener {
+                            ).addOnSuccessListener { authResult ->
                                 val user = FirebaseAuth.getInstance().currentUser
-                                val profileUpdates = UserProfileChangeRequest.Builder()
-                                    .setDisplayName(nameText.text.trim().toString()).build()
-                                user?.updateProfile(profileUpdates)
-                                    ?.addOnCompleteListener { profileUpdateTask ->
-                                        if (profileUpdateTask.isSuccessful) {
-                                            // Save the sign-in state
-                                            spSignIn.edit { putBoolean("isSignedIn", true)}
+                                val userId = authResult.user?.uid
+                                userId?.let {
+                                    // Guarda la información del usuario en la base de datos
+                                    val companyData = hashMapOf(
+                                        "email" to emailText.text.trim().toString(),
+                                        "name" to nameText.text.trim().toString(),
+                                        "isCompany" to false
+                                    )
+                                    FirebaseDatabase.getInstance().getReference("user").child(it).setValue(companyData)
+                                        .addOnSuccessListener {
+                                            val profileUpdates = UserProfileChangeRequest.Builder()
+                                                .setDisplayName(nameText.text.trim().toString()).build()
+                                            user?.updateProfile(profileUpdates)
+                                                ?.addOnCompleteListener { profileUpdateTask ->
+                                                    if (profileUpdateTask.isSuccessful) {
+                                                        // Save the sign-in state
+                                                        spSignIn.edit { putBoolean("isSignedIn", true)}
 
-                                            startActivity(Intent(this, HomeActivity::class.java),
-                                                ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
-                                            finish() // Finish the SignInActivity to prevent user from going back
+                                                        startActivity(Intent(this, HomeActivity::class.java),
+                                                            ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+                                                        finish() // Finish the SignInActivity to prevent user from going back
 
-                                            Toast.makeText(this,
-                                                getString(R.string.welcome_toast) + " " + user.displayName.toString(),
-                                                Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(this,
+                                                            getString(R.string.welcome_toast) + " " + user.displayName.toString(),
+                                                            Toast.LENGTH_SHORT).show()
 
-                                        } else { Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show() } }
+                                                    } else { Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show() } }
+                                        }.addOnFailureListener { Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show() } }
                             }.addOnFailureListener { Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show() }
                         } else { confirmationText.error = getString(R.string.passwords_do_not_match) }
                     } else { confirmationText.error = getString(R.string.required) }

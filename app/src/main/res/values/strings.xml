@@ -2,11 +2,15 @@
     <string name="app_name" translatable="false">Facebed</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="sign_in_with_email">Sign in</string>
+    <string name="not_signed_in">Not signed in</string>
     <string name="register">Register</string>
     <string name="confirm_password">Confirm password</string>
     <string name="create_account">Create account</string>
+    <string name="are_you_a_company">Are you a company? Register </string>
+    <string name="here">here</string>
     <string name="bad_credentials">Bad credentials</string>
     <string name="name">Name</string>
+    <string name="location">Location</string>
     <string name="password">Password</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="required">Required</string>
