@@ -1,6 +1,5 @@
 package com.facebed
 
-import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -87,11 +86,14 @@ class RegisterActivity : AppCompatActivity() {
                                                 ?.addOnCompleteListener { profileUpdateTask ->
                                                     if (profileUpdateTask.isSuccessful) {
                                                         // Save the sign-in state
-                                                        spSignIn.edit { putBoolean("isSignedIn", true)}
+                                                        spSignIn.edit {
+                                                            putBoolean("isSignedIn", true)
+                                                            putBoolean("isCompany", false)
+                                                        }
 
-                                                        startActivity(Intent(this, HomeActivity::class.java),
-                                                            ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
-                                                        finish() // Finish the SignInActivity to prevent user from going back
+                                                        val intent = Intent(this, HomeActivity::class.java)
+                                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                        startActivity(intent)
 
                                                         Toast.makeText(this,
                                                             getString(R.string.welcome_toast) + " " + user.displayName.toString(),

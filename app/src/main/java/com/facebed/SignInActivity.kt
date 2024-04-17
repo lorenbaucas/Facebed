@@ -24,7 +24,10 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,10 +67,15 @@ class SignInActivity : AppCompatActivity() {
 
         // Check if user is already signed in
         if (spSignIn.getBoolean("isSignedIn", false)) {
-            startActivity(Intent(this@SignInActivity, HomeActivity::class.java))
+            val isCompany = spSignIn.getBoolean("isCompany", false)
+            val homeActivityIntent = if (isCompany) {
+                Intent(this@SignInActivity, HomeCompanyActivity::class.java)
+            } else {
+                Intent(this@SignInActivity, HomeActivity::class.java)
+            }
+            startActivity(homeActivityIntent)
             finish() // Finish the SignInActivity to prevent user from going back
         }
-
 
         val googleSignInButton: Button = findViewById(R.id.google_sign_in_button)
         googleSignInButton.setOnClickListener {
@@ -138,7 +146,10 @@ class SignInActivity : AppCompatActivity() {
                         FirebaseDatabase.getInstance().getReference("user").child(it).setValue(userData)
                             .addOnSuccessListener {
                                 // Save the sign-in state
-                                spSignIn.edit { putBoolean("isSignedIn", true)}
+                                spSignIn.edit {
+                                    putBoolean("isSignedIn", true)
+                                    putBoolean("isCompany", false)
+                                }
 
                                 startActivity(Intent(this@SignInActivity, HomeActivity::class.java),
                                     ActivityOptions.makeSceneTransitionAnimation(this@SignInActivity).toBundle())
@@ -173,22 +184,39 @@ class SignInActivity : AppCompatActivity() {
             if (passwordText.text.trim().toString().isNotEmpty()) {
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(
                     emailText.text.trim().toString(), passwordText.text.trim().toString())
-                    .addOnSuccessListener {
-                        // Save the sign-in state
-                        spSignIn.edit { putBoolean("isSignedIn", true)}
+                    .addOnSuccessListener { authResult ->
+                        val userRef = FirebaseDatabase.getInstance().getReference("user").child(authResult.user!!.uid)
+                        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                val isCompany = dataSnapshot.child("isCompany").getValue(Boolean::class.java)
+                                if (isCompany != null) {
+                                    if (isCompany) {
+                                        // Usuario es una empresa, redirige a HomeCompanyActivity
+                                        startActivity(Intent(this@SignInActivity, HomeCompanyActivity::class.java))
+                                        spSignIn.edit { putBoolean("isCompany", true) }
+                                    } else {
+                                        // Usuario no es una empresa, redirige a HomeActivity
+                                        startActivity(Intent(this@SignInActivity, HomeActivity::class.java))
+                                        spSignIn.edit { putBoolean("isCompany", false) }
+                                    }
+                                    // Save the sign-in state
+                                    spSignIn.edit { putBoolean("isSignedIn", true) }
+                                    finish() // Finish the SignInActivity to prevent user from going back
+                                } else {
+                                    Toast.makeText(this@SignInActivity, "Error obteniendo información de usuario", Toast.LENGTH_SHORT).show()
+                                }
+                            }
 
-                        startActivity(Intent(this@SignInActivity, HomeActivity::class.java),
-                            ActivityOptions.makeSceneTransitionAnimation(this@SignInActivity).toBundle())
-                        finish() // Finish the SignInActivity to prevent user from going back
-
-                        Toast.makeText(this, getString(R.string.welcome_toast) + " " +
-                            FirebaseAuth.getInstance().currentUser!!.displayName.toString(),
-                            Toast.LENGTH_SHORT).show()
-                    }.addOnFailureListener {
-                        Toast.makeText(this, getString(R.string.bad_credentials),
-                            Toast.LENGTH_SHORT).show()
-                }
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                Toast.makeText(this@SignInActivity, "Error obteniendo información de usuario", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, getString(R.string.bad_credentials), Toast.LENGTH_SHORT).show()
+                    }
             } else { passwordText.error = getString(R.string.required) }
         } else { emailText.error = getString(R.string.required) }
     }
+
 }
