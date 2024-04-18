@@ -4,7 +4,9 @@
     <string name="not_signed_in">No has iniciado sesión</string>
     <string name="register">Registrarme</string>
     <string name="create_account">Crear cuenta</string>
+    <string name="company_name">Nombre de empresa</string>
     <string name="location">Ubicación</string>
+    <string name="fiscal_identification_code">CIF</string>
     <string name="password">Contraseña</string>
     <string name="required">Obligatorio</string>
     <string name="welcome_toast">Bienvenido/a</string>

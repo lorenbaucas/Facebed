@@ -10,7 +10,9 @@
     <string name="here">here</string>
     <string name="bad_credentials">Bad credentials</string>
     <string name="name">Name</string>
+    <string name="company_name">Company name</string>
     <string name="location">Location</string>
+    <string name="fiscal_identification_code">FIC</string>
     <string name="password">Password</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="required">Required</string>

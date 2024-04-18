@@ -11,15 +11,14 @@
         android:id="@+id/app_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="160dp"
         android:fontFamily="monospace"
         android:text="@string/app_name"
         android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewRegister"
@@ -77,10 +76,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@android:color/transparent"
-                android:drawableStart="@drawable/baseline_account_circle_24"
+                android:drawableStart="@drawable/baseline_work_24"
                 android:drawablePadding="8dp"
                 android:ems="10"
-                android:hint="@string/name"
+                android:hint="@string/company_name"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
                 android:textSize="16sp"
@@ -90,16 +89,16 @@
                 app:layout_constraintVertical_bias="0" />
 
             <AutoCompleteTextView
-                android:id="@+id/location_text"
+                android:id="@+id/fic_text"
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@android:color/transparent"
-                android:drawableStart="@drawable/baseline_location_on_24"
+                android:drawableStart="@drawable/baseline_sell_24"
                 android:drawablePadding="8dp"
                 android:ems="10"
-                android:hint="@string/location"
-                android:inputType="textPostalAddress"
+                android:hint="@string/fiscal_identification_code"
+                android:inputType="textAutoComplete"
                 android:minHeight="48dp"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -122,7 +121,7 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/location_text"
+                app:layout_constraintTop_toBottomOf="@+id/fic_text"
                 app:layout_constraintVertical_bias="0" />
 
             <AutoCompleteTextView

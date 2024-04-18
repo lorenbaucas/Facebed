@@ -23,7 +23,7 @@ class RegisterCompanyActivity : AppCompatActivity() {
 
     private lateinit var emailText: AutoCompleteTextView
     private lateinit var nameText: AutoCompleteTextView
-    private lateinit var locationText: AutoCompleteTextView
+    private lateinit var ficText: AutoCompleteTextView
     private lateinit var passwordText: AutoCompleteTextView
     private lateinit var confirmationText: AutoCompleteTextView
 
@@ -36,7 +36,7 @@ class RegisterCompanyActivity : AppCompatActivity() {
 
         emailText = findViewById(R.id.email_text)
         nameText = findViewById(R.id.name_text)
-        locationText = findViewById(R.id.location_text)
+        ficText = findViewById(R.id.fic_text)
         passwordText = findViewById(R.id.password_text)
         confirmationText = findViewById(R.id.confirmation_text)
 
@@ -63,7 +63,7 @@ class RegisterCompanyActivity : AppCompatActivity() {
     private fun emailRegister() {
         if (emailText.text.trim().toString().isNotEmpty()) {
             if (nameText.text.trim().toString().isNotEmpty()) {
-                if (locationText.text.trim().toString().isNotEmpty()){
+                if (ficText.text.trim().toString().isNotEmpty()){
                     if (passwordText.text.trim().toString().isNotEmpty() &&
                         isPasswordValid(passwordText.text.trim().toString())) {
                         if (confirmationText.text.trim().toString().isNotEmpty()) {
@@ -78,8 +78,8 @@ class RegisterCompanyActivity : AppCompatActivity() {
                                         // Guarda la información del usuario en la base de datos
                                         val companyData = hashMapOf(
                                             "email" to emailText.text.trim().toString(),
-                                            "name" to nameText.text.trim().toString(),
-                                            "location" to locationText.text.trim().toString(),
+                                            "companyName" to nameText.text.trim().toString(),
+                                            "fic" to ficText.text.trim().toString(),
                                             "isCompany" to true
                                         )
                                         FirebaseDatabase.getInstance().getReference("user").child(it).setValue(companyData)
@@ -109,7 +109,7 @@ class RegisterCompanyActivity : AppCompatActivity() {
                             } else { confirmationText.error = getString(R.string.passwords_do_not_match) }
                         } else { confirmationText.error = getString(R.string.required) }
                     } else { passwordText.error = getString(R.string.valid_password) }
-                } else { locationText.error = getString(R.string.required) }
+                } else { ficText.error = getString(R.string.required) }
             } else { nameText.error = getString(R.string.required) }
         } else { emailText.error = getString(R.string.required) }
     }
