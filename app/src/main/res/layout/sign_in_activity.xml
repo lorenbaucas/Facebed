@@ -5,7 +5,7 @@
     android:id="@+id/sign_in_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignInActivity">
+    tools:context=".controllers.SignInActivity">
 
     <TextView
         android:id="@+id/app_title"
@@ -21,10 +21,24 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_create_account"
-        android:layout_width="160dp"
+        android:id="@+id/text_forgot_password"
+        android:layout_width="wrap_content"
         android:layout_height="45dp"
         android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:paddingTop="10dp"
+        android:text="@string/forgot_password"
+        android:textAlignment="center"
+        android:textColor="#969696"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardViewSignIn" />
+
+    <TextView
+        android:id="@+id/text_create_account"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
         android:layout_weight="1"
         android:paddingTop="10dp"
         android:text="@string/create_account"
@@ -33,7 +47,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardViewSignIn" />
+        app:layout_constraintTop_toBottomOf="@+id/text_forgot_password" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewSignIn"
@@ -66,6 +80,20 @@
                 app:layout_constraintTop_toBottomOf="@+id/password_text"
                 app:layout_constraintVertical_bias="0" />
 
+            <ProgressBar
+                android:id="@+id/progressBarEmail"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone"
+                android:indeterminateTint="#F66C2C"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/password_text" />
+
             <AutoCompleteTextView
                 android:id="@+id/email_text"
                 android:layout_width="240dp"
@@ -79,6 +107,7 @@
                 android:inputType="textEmailAddress"
                 android:minHeight="48dp"
                 android:textSize="16sp"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -91,6 +120,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@android:color/transparent"
                 android:drawableStart="@drawable/baseline_lock_24"
+                android:drawableEnd="@drawable/baseline_remove_red_eye_24"
                 android:drawablePadding="8dp"
                 android:ems="10"
                 android:hint="@string/password"
@@ -101,6 +131,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/email_text"
                 app:layout_constraintVertical_bias="0" />
+
+            <TextView
+                android:id="@+id/wait_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/password_text" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -115,6 +157,18 @@
         android:text="@string/sign_in_with_google"
         android:textColor="?attr/colorOnSurface"
         android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/separator" />
+
+    <ProgressBar
+        android:id="@+id/progressBarGoogle"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:visibility="gone"
+        android:indeterminateTint="#F66C2C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator" />
@@ -159,10 +213,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="100dp"
+        android:layout_marginVertical="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/google_sign_in_button">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/text_are_you_company"
@@ -175,11 +229,10 @@
             android:id="@+id/text_here"
             android:layout_width="35dp"
             android:layout_height="50dp"
-            android:gravity="center"
             android:layout_weight="1"
-            android:textColor="#0091F1"
-            android:text="@string/here" />
+            android:gravity="center"
+            android:text="@string/here"
+            android:textColor="#0091F1" />
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

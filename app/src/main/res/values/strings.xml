@@ -3,9 +3,24 @@
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="sign_in_with_email">Sign in</string>
     <string name="not_signed_in">Not signed in</string>
+    <string name="email_not_valid">Email not valid</string>
+    <string name="password_not_valid">At leat 8 characters including: 1 letter, 1 digit, 1 special character (._@$!#%^&amp;+=)</string>
+    <string name="email_used">Email already registered</string>
+    <string name="email_verification">Check your email and verify your account</string>
+    <string name="already_verified">I have verified my account</string>
+    <string name="please_verify">Account created, please, check email and verify before sign in</string>
+    <string name="wait">Please wait . . .</string>
+    <string name="fic_used">This FIC is already registered</string>
+    <string name="fic_not_valid">FIC not valid</string>
     <string name="register">Register</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="forgot_password">I have forgot my password</string>
+    <string name="send_recovery">Send recovery to</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="sent_recovery">Recovery password sent</string>
     <string name="create_account">Create account</string>
+    <string name="account_not_found">Account not found</string>
     <string name="are_you_a_company">Are you a company? Register </string>
     <string name="here">here</string>
     <string name="bad_credentials">Bad credentials</string>
@@ -16,7 +31,6 @@
     <string name="password">Password</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="required">Required</string>
-    <string name="valid_password">At leat 8 characters including: 1 letter, 1 digit, 1 special character (._@$!#%^&amp;+=)</string>
     <string name="welcome_toast">Welcome</string>
     <string name="sign_in_separator">or</string>
     <string name="error">We are sorry, there was an error</string>

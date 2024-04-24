@@ -1,7 +1,8 @@
-package com.facebed
+package com.facebed.controllers
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.facebed.R
 
 class HomeCompanyActivity : AppCompatActivity() {
 

@@ -3,6 +3,8 @@
     <string name="sign_in_with_google">Iniciar sesión con Google</string>
     <string name="not_signed_in">No has iniciado sesión</string>
     <string name="register">Registrarme</string>
+    <string name="forgot_password">He olvidado mi contraseña</string>
+    <string name="send_recovery">Enviar recuperación a</string>
     <string name="create_account">Crear cuenta</string>
     <string name="company_name">Nombre de empresa</string>
     <string name="location">Ubicación</string>
@@ -17,7 +19,19 @@
     <string name="name">Nombre</string>
     <string name="passwords_do_not_match">Contraseñas no coinciden</string>
     <string name="error">Lo sentimos, hubo un error</string>
-    <string name="valid_password">Al menos 8 caracteres incluyendo: 1 letra, 1 dígito, 1 carácter especial (._@$!#%^&amp;+=)</string>
+    <string name="password_not_valid">Al menos 8 caracteres incluyendo: 1 letra, 1 dígito, 1 carácter especial (._@$!#%^&amp;+=)</string>
     <string name="are_you_a_company">"¿Eres empresa? Regístrate "</string>
     <string name="here">aquí</string>
+    <string name="ok">Vale</string>
+    <string name="cancel">Cancelar</string>
+    <string name="sent_recovery">Recuperación de contraseña enviada</string>
+    <string name="account_not_found">Cuenta no encontrada</string>
+    <string name="email_not_valid">Email no válido</string>
+    <string name="email_used">Email ya registrado</string>
+    <string name="fic_not_valid">CIF no válido</string>
+    <string name="please_verify">Cuenta creada, por favor, revise su email y verifique antes de iniciar sesión</string>
+    <string name="fic_used">Este CIF ya está registrado</string>
+    <string name="email_verification">Comprueba tu email y verifica tu cuenta</string>
+    <string name="already_verified">He verificado mi cuenta</string>
+    <string name="wait">Por favor espera . . .</string>
 </resources>

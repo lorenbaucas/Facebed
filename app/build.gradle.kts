@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -84,6 +85,4 @@ dependencies {
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
-
-    implementation("com.saadahmedev.popup-dialog:popup-dialog:2.0.0")
 }

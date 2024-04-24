@@ -5,7 +5,7 @@
     android:id="@+id/register_company_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterCompanyActivity">
+    tools:context=".controllers.RegisterCompanyActivity">
 
     <TextView
         android:id="@+id/app_title"
@@ -39,7 +39,6 @@
                 android:id="@+id/register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:backgroundTint="#0091F1"
@@ -51,6 +50,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/confirmation_text"
                 app:layout_constraintVertical_bias="0" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:indeterminateTint="#0091F1"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/confirmation_text" />
 
             <AutoCompleteTextView
                 android:id="@+id/email_text"
@@ -113,6 +126,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@android:color/transparent"
                 android:drawableStart="@drawable/baseline_lock_24"
+                android:drawableEnd="@drawable/baseline_remove_red_eye_24"
                 android:drawablePadding="8dp"
                 android:ems="10"
                 android:hint="@string/password"
@@ -131,6 +145,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@android:color/transparent"
                 android:drawableStart="@drawable/baseline_lock_24"
+                android:drawableEnd="@drawable/baseline_remove_red_eye_24"
                 android:drawablePadding="8dp"
                 android:ems="10"
                 android:hint="@string/confirm_password"
@@ -141,7 +156,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/password_text"
                 app:layout_constraintVertical_bias="0" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
