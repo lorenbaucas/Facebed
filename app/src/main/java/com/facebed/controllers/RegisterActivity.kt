@@ -11,21 +11,15 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
-import androidx.core.content.edit
 import com.facebed.R
 import com.facebed.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var spSignIn: SharedPreferences
-
-    private lateinit var viewRegister: CardView
 
     private lateinit var progressBar: ProgressBar
 
@@ -39,7 +33,6 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.register_activity)
-        enableEdgeToEdge()
 
         /*val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -63,11 +56,9 @@ class RegisterActivity : AppCompatActivity() {
         passwordText = findViewById(R.id.password_text)
         confirmationText = findViewById(R.id.confirmation_text)
 
-        progressBar = findViewById(R.id.progressBar)
+        progressBar = findViewById(R.id.progress_bar)
 
-        viewRegister = findViewById(R.id.cardViewRegister)
-
-        registerButton = findViewById(R.id.register)
+        registerButton = findViewById(R.id.register_button)
 
         // Linear Gradient for the title
         val appTitle: TextView = findViewById(R.id.app_title)
@@ -97,37 +88,40 @@ class RegisterActivity : AppCompatActivity() {
                             .addOnSuccessListener {
                                 val user = FirebaseAuth.getInstance().currentUser
                                 user?.sendEmailVerification()?.addOnCompleteListener {
-                                    user.uid.let {
                                     val userData = hashMapOf(
                                         "email" to email,
                                         "name" to name,
                                         "isCompany" to false
                                     )
-                                    FirebaseDatabase.getInstance().getReference("user").child(it).setValue(userData)
+
+                                    FirebaseFirestore.getInstance().collection("User").document(user.uid).set(userData)
                                         .addOnSuccessListener {
                                             val profileUpdates = UserProfileChangeRequest.Builder()
                                                 .setDisplayName(name).build()
                                             user.updateProfile(profileUpdates)
                                                 .addOnCompleteListener { profileUpdateTask ->
                                                     if (profileUpdateTask.isSuccessful) {
-                                                        Toast.makeText(this, getString(R.string.please_verify), Toast.LENGTH_LONG).show()
+                                                        Toast.makeText(this, getString(R.string.please_verify),
+                                                            Toast.LENGTH_LONG).show()
+
                                                         loadingRegister()
 
-                                                        startActivity(Intent(this, SignInActivity::class.java),
-                                                            ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+                                                        startActivity(
+                                                            Intent(this, SignInActivity::class.java),
+                                                            ActivityOptions.makeSceneTransitionAnimation(this).toBundle()
+                                                        )
                                                         finish()
                                                     } else {
-                                                        Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show()
-                                                    } } }
+                                                        Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show() } }
+                                        }
                                         .addOnFailureListener {
                                             Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show()
                                             loadingRegister() } }
-                                    } }
+                            }
                             .addOnFailureListener {
                                 emailText.error = getString(R.string.email_used)
                                 Toast.makeText(this, getString(R.string.email_used), Toast.LENGTH_SHORT).show()
-                                loadingRegister()
-                            }
+                                loadingRegister() }
                     } else {
                         confirmationText.error = getString(R.string.passwords_do_not_match)
                         loadingRegister() }

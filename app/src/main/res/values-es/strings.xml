@@ -34,4 +34,17 @@
     <string name="email_verification">Comprueba tu email y verifica tu cuenta</string>
     <string name="already_verified">He verificado mi cuenta</string>
     <string name="wait">Por favor espera . . .</string>
+    <string name="my_ratings">Mis valoraciones</string>
+    <string name="email">Correo electrónico</string>
+    <string name="phone_number">Número de teléfono</string>
+    <string name="delete_account">Borrar cuenta</string>
+    <string name="account_deleted">Cuenta eliminada, te echaremos de menos</string>
+    <string name="confirm_delete_account">Al borrar tu cuenta eres consciente de que es un acto irreversible. Introduce tu contraseña para continuar:</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="account_created_on">Cuenta creada el</string>
+    <string name="consequences">Acepto las consecuencias</string>
+    <string name="password_and_checkbox">Introduce tu contraseña y acepta la casilla de verificación</string>
+    <string name="updated_name">Nombre actualizado</string>
+    <string name="permission_not_granted">Por favor da permiso para cambiar su foto de perfil</string>
+    <string name="updated_photo">Foto actualizada</string>
 </resources>

@@ -33,7 +33,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardViewSignIn" />
+        app:layout_constraintTop_toBottomOf="@+id/cardview_sign_in" />
 
     <TextView
         android:id="@+id/text_create_account"
@@ -50,7 +50,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_forgot_password" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewSignIn"
+        android:id="@+id/cardview_sign_in"
         android:layout_width="330dp"
         android:layout_height="214dp"
         android:layout_marginTop="30dp"
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:backgroundTint="#F66C2C"
+                android:backgroundTint="#10000000"
                 android:text="@string/sign_in_with_email"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
@@ -78,10 +78,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/password_text"
-                app:layout_constraintVertical_bias="0" />
+                app:layout_constraintVertical_bias="1.0" />
 
             <ProgressBar
-                android:id="@+id/progressBarEmail"
+                android:id="@+id/progress_bar_email"
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                 android:drawableStart="@drawable/baseline_email_24"
                 android:drawablePadding="8dp"
                 android:ems="10"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:minHeight="48dp"
                 android:textSize="16sp"
@@ -152,7 +152,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:backgroundTint="#F66C2C"
+        android:backgroundTint="#10000000"
         android:drawableLeft="@drawable/googleg_standard_color_18"
         android:text="@string/sign_in_with_google"
         android:textColor="?attr/colorOnSurface"
@@ -162,7 +162,7 @@
         app:layout_constraintTop_toBottomOf="@+id/separator" />
 
     <ProgressBar
-        android:id="@+id/progressBarGoogle"
+        android:id="@+id/progress_bar_google"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -70,6 +70,8 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.database.ktx)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -83,6 +85,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 }

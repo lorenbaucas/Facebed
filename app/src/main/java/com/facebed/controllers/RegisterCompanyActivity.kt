@@ -11,16 +11,12 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.facebed.R
 import com.facebed.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterCompanyActivity : AppCompatActivity() {
     private lateinit var spSignIn: SharedPreferences
@@ -38,7 +34,6 @@ class RegisterCompanyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.register_company_activity)
-        enableEdgeToEdge()
 
         spSignIn = getSharedPreferences("SignIn", Context.MODE_PRIVATE)
 
@@ -48,9 +43,9 @@ class RegisterCompanyActivity : AppCompatActivity() {
         passwordText = findViewById(R.id.password_text)
         confirmationText = findViewById(R.id.confirmation_text)
 
-        progressBar = findViewById(R.id.progressBar)
+        progressBar = findViewById(R.id.progress_bar)
 
-        registerButton = findViewById(R.id.register)
+        registerButton = findViewById(R.id.register_button)
 
         Utils.showPassword(passwordText)
         Utils.showPassword(confirmationText)
@@ -78,60 +73,92 @@ class RegisterCompanyActivity : AppCompatActivity() {
                 if (Utils.isFICValid(fic)) {
                     if (Utils.isPasswordValid(password)) {
                         if (password == confirmation) {
-                            val dbRef = FirebaseDatabase.getInstance().getReference("user")
-                            dbRef.orderByChild("fic").equalTo(fic).addListenerForSingleValueEvent(
-                                object : ValueEventListener {
-                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            ficText.error = getString(R.string.fic_used)
-                                            Toast.makeText(this@RegisterCompanyActivity, getString(R.string.fic_used), Toast.LENGTH_SHORT).show()
-                                            loadingRegister()
-                                        } else {
-                                            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                                                .addOnSuccessListener {
-                                                    val user = FirebaseAuth.getInstance().currentUser
-                                                    user?.uid?.let {
-                                                        val companyData = hashMapOf(
-                                                            "email" to email,
-                                                            "companyName" to name,
-                                                            "fic" to fic,
-                                                            "isCompany" to true
-                                                        )
-                                                        FirebaseDatabase.getInstance().getReference("user").child(it).setValue(companyData)
-                                                            .addOnSuccessListener {
-                                                                val profileUpdates = UserProfileChangeRequest.Builder()
-                                                                    .setDisplayName(name).build()
-                                                                user.updateProfile(profileUpdates)
-                                                                    .addOnCompleteListener { profileUpdateTask ->
-                                                                        if (profileUpdateTask.isSuccessful) {
-                                                                            Toast.makeText(this@RegisterCompanyActivity,
-                                                                                getString(R.string.please_verify), Toast.LENGTH_LONG).show()
-                                                                            loadingRegister()
+                            FirebaseFirestore.getInstance().collection("User")
+                                .whereEqualTo("fic", fic)
+                                .get()
+                                .addOnSuccessListener { querySnapshot ->
+                                    if (querySnapshot.isEmpty) {
+                                        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                                            .addOnSuccessListener {
+                                                val user = FirebaseAuth.getInstance().currentUser
+                                                user?.sendEmailVerification()?.addOnCompleteListener {
+                                                    val companyData = hashMapOf(
+                                                        "email" to email,
+                                                        "companyName" to name,
+                                                        "fic" to fic,
+                                                        "isCompany" to true
+                                                    )
 
-                                                                            startActivity(Intent(this@RegisterCompanyActivity, SignInActivity::class.java),
-                                                                                ActivityOptions.makeSceneTransitionAnimation(this@RegisterCompanyActivity).toBundle())
-                                                                            finish()
-                                                                        } else {
-                                                                            Toast.makeText(this@RegisterCompanyActivity,
-                                                                                getString(R.string.error), Toast.LENGTH_SHORT).show()
-                                                                        } } }
-                                                            .addOnFailureListener {
-                                                                Toast.makeText(this@RegisterCompanyActivity,
-                                                                    getString(R.string.error), Toast.LENGTH_SHORT).show()
-                                                                loadingRegister()
-                                                            } } }
-                                                .addOnFailureListener {
-                                                    emailText.error = getString(R.string.email_used)
-                                                    Toast.makeText(this@RegisterCompanyActivity,
-                                                        getString(R.string.email_used), Toast.LENGTH_SHORT).show()
-                                                    loadingRegister()
-                                                } }
-                                    }
-                                    override fun onCancelled(databaseError: DatabaseError) {
-                                        Toast.makeText(this@RegisterCompanyActivity,
-                                            getString(R.string.error), Toast.LENGTH_SHORT).show()
+                                                    FirebaseFirestore.getInstance().collection("User").document(user.uid).set(companyData)
+                                                        .addOnSuccessListener {
+                                                            val profileUpdates = UserProfileChangeRequest.Builder()
+                                                                .setDisplayName(name).build()
+                                                            user.updateProfile(profileUpdates)
+                                                                .addOnCompleteListener { profileUpdateTask ->
+                                                                    if (profileUpdateTask.isSuccessful) {
+                                                                        Toast.makeText(
+                                                                            this@RegisterCompanyActivity,
+                                                                            getString(R.string.please_verify),
+                                                                            Toast.LENGTH_LONG
+                                                                        ).show()
+
+                                                                        loadingRegister()
+
+                                                                        startActivity(
+                                                                            Intent(this@RegisterCompanyActivity, SignInActivity::class.java),
+                                                                            ActivityOptions.makeSceneTransitionAnimation(this@RegisterCompanyActivity).toBundle()
+                                                                        )
+
+                                                                        finish()
+                                                                    } else {
+                                                                        Toast.makeText(
+                                                                            this@RegisterCompanyActivity,
+                                                                            getString(R.string.error),
+                                                                            Toast.LENGTH_SHORT
+                                                                        ).show()
+
+                                                                        loadingRegister()
+                                                                    }
+                                                        }.addOnFailureListener {
+                                                            Toast.makeText(
+                                                                this@RegisterCompanyActivity,
+                                                                getString(R.string.error),
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+
+                                                            loadingRegister() }
+                                                        }
+                                                }
+                                            }.addOnFailureListener {
+                                                emailText.error = getString(R.string.email_used)
+                                                Toast.makeText(
+                                                    this@RegisterCompanyActivity,
+                                                    getString(R.string.email_used),
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+
+                                                loadingRegister()
+                                            }
+                                    } else {
+                                        ficText.error = getString(R.string.fic_used)
+                                        Toast.makeText(
+                                            this@RegisterCompanyActivity,
+                                            getString(R.string.fic_used),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
                                         loadingRegister()
-                                    } } )
+                                    }
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(
+                                        this@RegisterCompanyActivity,
+                                        getString(R.string.error),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    loadingRegister()
+                                }
                         } else {
                             confirmationText.error = getString(R.string.passwords_do_not_match)
                             loadingRegister() }

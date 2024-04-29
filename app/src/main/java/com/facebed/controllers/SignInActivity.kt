@@ -1,19 +1,17 @@
 package com.facebed.controllers
 
+import android.annotation.SuppressLint
 import android.app.ActivityOptions
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -29,10 +27,8 @@ import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.initialize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,10 +57,11 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var createAccount: TextView
     private lateinit var registerCompany: TextView
 
+    private var signInCounter = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.sign_in_activity)
-        enableEdgeToEdge()
 
         googleSignInButton = findViewById(R.id.google_sign_in_button)
         emailSignInButton = findViewById(R.id.email_sign_in_button)
@@ -77,8 +74,8 @@ class SignInActivity : AppCompatActivity() {
         createAccount = findViewById(R.id.text_create_account)
         registerCompany = findViewById(R.id.text_here)
 
-        progressBarEmail = findViewById(R.id.progressBarEmail)
-        progressBarGoogle = findViewById(R.id.progressBarGoogle)
+        progressBarEmail = findViewById(R.id.progress_bar_email)
+        progressBarGoogle = findViewById(R.id.progress_bar_google)
 
         Firebase.initialize(context = this)
         Firebase.appCheck.installAppCheckProviderFactory(
@@ -121,22 +118,17 @@ class SignInActivity : AppCompatActivity() {
 
         forgotPassword.setOnClickListener {
             val email = emailText.text.trim().toString()
-            val user = FirebaseAuth.getInstance().currentUser
-            user?.reload()?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    if (user.isEmailVerified) {
-                        if(Utils.isEmailValid(email)){
-                            AlertDialog.Builder(this)
-                                .setTitle(getString(R.string.send_recovery))
-                                .setMessage(email)
-                                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                                    Toast.makeText(this, getString(R.string.sent_recovery), Toast.LENGTH_SHORT).show()
-                                    dialog.dismiss()
-                                }
-                                .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                                .create()
-                                .show() } } } }
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.send_recovery))
+                .setMessage(email)
+                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    Toast.makeText(this, getString(R.string.sent_recovery), Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                .create()
+                .show()
         }
 
         createAccount.setOnClickListener {
@@ -182,8 +174,11 @@ class SignInActivity : AppCompatActivity() {
                 // Get an AuthCredential from the Google ID token
                 val authCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
 
+                spSignIn.edit { putString("googleIdToken", googleIdTokenCredential.idToken) }
+
                 // Register credentials in FirebaseAuth
-                FirebaseAuth.getInstance().signInWithCredential(authCredential).addOnSuccessListener {authResult ->
+                FirebaseAuth.getInstance().signInWithCredential(authCredential)
+                    .addOnSuccessListener {authResult ->
                     val user = FirebaseAuth.getInstance().currentUser
                     val userId = authResult.user?.uid
                     userId?.let {
@@ -193,39 +188,35 @@ class SignInActivity : AppCompatActivity() {
                             "name" to user?.displayName,
                             "isCompany" to false
                         )
-                        FirebaseDatabase.getInstance().getReference("user").child(it).setValue(userData)
+
+                        FirebaseFirestore.getInstance().collection("User")
+                            .document(userId).set(userData)
                             .addOnSuccessListener {
-                                // Save the sign-in state
+                                // Guarda el estado de inicio de sesión
                                 spSignIn.edit {
                                     putBoolean("isSignedIn", true)
                                     putBoolean("isCompany", false)
                                 }
 
-                                startActivity(Intent(this@SignInActivity, HomeActivity::class.java),
-                                    ActivityOptions.makeSceneTransitionAnimation(this@SignInActivity).toBundle())
-                                finish() // Finish the SignInActivity to prevent user from going back
+                                startActivity(
+                                    Intent(this@SignInActivity, HomeActivity::class.java),
+                                    ActivityOptions.makeSceneTransitionAnimation(this@SignInActivity).toBundle()
+                                )
+                                finish()
 
-                                Toast.makeText(this@SignInActivity,
-                                    getString(R.string.welcome_toast) + " " + user?.displayName.toString(),
-                                    Toast.LENGTH_SHORT).show()
-
-                            }.addOnFailureListener {
-                                Toast.makeText(this@SignInActivity,
+                                Toast.makeText(
+                                    this@SignInActivity,
+                                    getString(R.string.welcome_toast) + " " + user?.displayName,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            .addOnFailureListener {Toast.makeText(this@SignInActivity,
                                 getString(R.string.error), Toast.LENGTH_SHORT).show()
                                 loadingGoogle()}
                     }
                 }.addOnFailureListener { Toast.makeText(this@SignInActivity,
                     getString(R.string.error), Toast.LENGTH_SHORT).show()
                     loadingGoogle()}
-
-                Log.i(TAG, googleIdTokenCredential.displayName.toString())
-                Log.i(TAG, googleIdTokenCredential.id.toString())
-                Log.i(TAG, googleIdTokenCredential.idToken.toString())
-                Log.i(TAG, googleIdTokenCredential.familyName.toString())
-                Log.i(TAG, googleIdTokenCredential.givenName.toString())
-                Log.i(TAG, googleIdTokenCredential.phoneNumber.toString())
-                Log.i(TAG, googleIdTokenCredential.profilePictureUri.toString())
-                
             } catch (e: androidx.credentials.exceptions.GetCredentialException) {
                 Toast.makeText(this@SignInActivity, e.message, Toast.LENGTH_SHORT).show()
                 loadingGoogle()
@@ -246,59 +237,75 @@ class SignInActivity : AppCompatActivity() {
                         val user = authResult.user
                         if (user != null) {
                             if (user.isEmailVerified) {
-                                val userRef = FirebaseDatabase.getInstance().getReference("user").child(user.uid)
-                                userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                        val isCompany = dataSnapshot.child("isCompany").getValue(Boolean::class.java)
-                                        if (isCompany != null) {
-                                            if (isCompany) {
-                                                startActivity(Intent(this@SignInActivity,
-                                                    HomeCompanyActivity::class.java))
+                                val userRef = FirebaseFirestore.getInstance()
+                                    .collection("User").document(user.uid)
 
-                                                spSignIn.edit { putBoolean("isCompany", true) }
-
-                                            } else {
-                                                startActivity(Intent(this@SignInActivity,
-                                                    HomeActivity::class.java))
-
-                                                spSignIn.edit { putBoolean("isCompany", false) }
-                                            }
-
-                                            spSignIn.edit { putBoolean("isSignedIn", true) }
-
-                                            Toast.makeText(this@SignInActivity,
-                                                getString(R.string.welcome_toast) + " " + user.displayName.toString(),
-                                                Toast.LENGTH_SHORT).show()
-
-                                            finish()
+                                userRef.get().addOnSuccessListener { document: DocumentSnapshot ->
+                                    val isCompany = document.getBoolean("isCompany")
+                                    if (isCompany != null) {
+                                        if (isCompany) {
+                                            startActivity(Intent(this@SignInActivity,
+                                                HomeCompanyActivity::class.java))
+                                            spSignIn.edit { putBoolean("isCompany", true) }
+                                        } else {
+                                            startActivity(Intent(this@SignInActivity,
+                                                HomeActivity::class.java))
+                                            spSignIn.edit { putBoolean("isCompany", false) }
                                         }
-                                        loadingEmail()
-                                    }
+                                        spSignIn.edit { putBoolean("isSignedIn", true) }
 
-                                    override fun onCancelled(databaseError: DatabaseError) {
-                                        Toast.makeText(this@SignInActivity,
-                                            getString(R.string.error), Toast.LENGTH_SHORT).show()
-                                        loadingEmail() } })
+                                        Toast.makeText(
+                                            this@SignInActivity,
+                                            getString(R.string.welcome_toast) + " " + user.displayName.toString(),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        finish()
+                                    }
+                                    loadingEmail()
+                                }
                             } else {
                                 user.sendEmailVerification().addOnCompleteListener {
                                     emailSignInButton.visibility = View.GONE
                                     wait.visibility = View.VISIBLE
-                                    Toast.makeText(this@SignInActivity,
-                                        getString(R.string.email_verification), Toast.LENGTH_LONG).show()
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        for (i in 10 downTo 1) {
-                                            wait(i)
+                                    signInCounter++
+                                    if (signInCounter == 1) {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            for (i in 10 downTo 1) { wait(i) }
+
+                                            emailSignInButton.visibility = View.VISIBLE
+                                            wait.visibility = View.GONE
+                                            signInCounter++
                                         }
-                                        emailSignInButton.visibility = View.VISIBLE
-                                        wait.visibility = View.GONE
+                                    } else if (signInCounter == 3) {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            for (i in 30 downTo 1) { wait(i) }
+
+                                            emailSignInButton.visibility = View.VISIBLE
+                                            wait.visibility = View.GONE
+                                            signInCounter = 0
+                                        }
                                     }
+
+                                    Toast.makeText(
+                                        this@SignInActivity,
+                                        getString(R.string.email_verification),
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
-                                loadingEmail() } }
+                                loadingEmail()
+                            }
+                        }
                     }
                     .addOnFailureListener {
-                        Toast.makeText(this@SignInActivity,
-                            getString(R.string.bad_credentials), Toast.LENGTH_SHORT).show()
-                        loadingEmail() }
+                        Toast.makeText(
+                            this@SignInActivity,
+                            getString(R.string.bad_credentials),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        loadingEmail()
+                    }
             } else {
                 passwordText.error = getString(R.string.password_not_valid)
                 loadingEmail() }
@@ -306,6 +313,7 @@ class SignInActivity : AppCompatActivity() {
             emailText.error = getString(R.string.email_not_valid)
             loadingEmail() }
     }
+
 
     private fun loadingEmail() {
         emailSignInButton.visibility = View.VISIBLE
@@ -317,6 +325,7 @@ class SignInActivity : AppCompatActivity() {
         progressBarGoogle.visibility = View.GONE
     }
 
+    @SuppressLint("SetTextI18n")
     private suspend fun wait(seconds: Int) {
         wait.text = getString(R.string.wait) + " " + seconds
         delay(1000)

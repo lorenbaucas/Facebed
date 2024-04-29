@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "182714962194",
+    "firebase_url": "https://facebed-app-default-rtdb.firebaseio.com",
     "project_id": "facebed-app",
     "storage_bucket": "facebed-app.appspot.com"
   },
@@ -20,6 +21,10 @@
             "package_name": "com.facebed",
             "certificate_hash": "3cddb698aec50ee0cdee921204ece4a3c1857724"
           }
+        },
+        {
+          "client_id": "182714962194-qmouil19bv70nkts9hd2cq1el7dvcc11.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
@@ -29,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "182714962194-qmouil19bv70nkts9hd2cq1el7dvcc11.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

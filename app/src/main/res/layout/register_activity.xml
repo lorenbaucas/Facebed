@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewRegister"
+        android:id="@+id/cardview_register"
         android:layout_width="330dp"
         android:layout_height="330dp"
         android:layout_marginTop="30dp"
@@ -36,12 +36,12 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/register"
+                android:id="@+id/register_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:backgroundTint="#F66C2C"
+                android:backgroundTint="#10000000"
                 android:text="@string/register"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
@@ -52,7 +52,7 @@
                 app:layout_constraintVertical_bias="0" />
 
             <ProgressBar
-                android:id="@+id/progressBar"
+                android:id="@+id/progress_bar"
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                 android:drawableStart="@drawable/baseline_email_24"
                 android:drawablePadding="8dp"
                 android:ems="10"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:minHeight="48dp"
                 android:textSize="16sp"

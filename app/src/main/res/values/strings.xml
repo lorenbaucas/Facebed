@@ -3,6 +3,7 @@
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="sign_in_with_email">Sign in</string>
     <string name="not_signed_in">Not signed in</string>
+    <string name="email">Email</string>
     <string name="email_not_valid">Email not valid</string>
     <string name="password_not_valid">At leat 8 characters including: 1 letter, 1 digit, 1 special character (._@$!#%^&amp;+=)</string>
     <string name="email_used">Email already registered</string>
@@ -20,11 +21,21 @@
     <string name="cancel">Cancel</string>
     <string name="sent_recovery">Recovery password sent</string>
     <string name="create_account">Create account</string>
+    <string name="account_created_on">Account created on</string>
+    <string name="delete_account">Delete account</string>
+    <string name="password_and_checkbox">Enter your password and accept the check box</string>
+    <string name="account_deleted">Account deleted, we will miss you</string>
+    <string name="confirm_delete_account">By deleting your account you are aware that it is an irreversible act. Enter your password to continue:</string>
+    <string name="consequences">I accept the consequences</string>
+    <string name="logout">Logout</string>
     <string name="account_not_found">Account not found</string>
     <string name="are_you_a_company">Are you a company? Register </string>
     <string name="here">here</string>
     <string name="bad_credentials">Bad credentials</string>
+    <string name="permission_not_granted">Please give permission to change your profile photo</string>
     <string name="name">Name</string>
+    <string name="updated_name">Updated name</string>
+    <string name="updated_photo">Updated photo</string>
     <string name="company_name">Company name</string>
     <string name="location">Location</string>
     <string name="fiscal_identification_code">FIC</string>
@@ -34,4 +45,7 @@
     <string name="welcome_toast">Welcome</string>
     <string name="sign_in_separator">or</string>
     <string name="error">We are sorry, there was an error</string>
+    <string name="my_ratings">My ratings</string>
+    <string name="phone_number">Phone number</string>
+
 </resources>

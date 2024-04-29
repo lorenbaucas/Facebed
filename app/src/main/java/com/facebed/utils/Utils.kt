@@ -1,5 +1,6 @@
 package com.facebed.utils
 
+import android.annotation.SuppressLint
 import android.widget.TextView
 import android.graphics.Color
 import android.graphics.LinearGradient
@@ -11,7 +12,6 @@ import android.widget.AutoCompleteTextView
 
 class Utils {
     companion object {
-
         fun isEmailValid(email: String): Boolean {
             val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
             return emailPattern.matches(email)
@@ -37,6 +37,7 @@ class Utils {
             return title
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         fun showPassword(view: AutoCompleteTextView) {
             var isPasswordVisible = false
             view.setOnTouchListener { _, event ->
@@ -53,7 +54,6 @@ class Utils {
                         }
 
                         view.setSelection(view.text.length)
-                        return@setOnTouchListener true
                     }
                 }
                 false
