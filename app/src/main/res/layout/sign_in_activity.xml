@@ -102,12 +102,12 @@
                 android:background="@android:color/transparent"
                 android:drawableStart="@drawable/baseline_email_24"
                 android:drawablePadding="8dp"
+                android:maxLength="50"
                 android:ems="10"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:minHeight="48dp"
                 android:textSize="16sp"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

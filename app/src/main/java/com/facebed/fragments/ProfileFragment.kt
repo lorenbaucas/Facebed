@@ -27,12 +27,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.GetCredentialRequest
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.facebed.R
 import com.facebed.controllers.CredentialManagerSingleton
 import com.facebed.controllers.SignInActivity
 import com.facebed.utils.Utils
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -107,8 +110,7 @@ class ProfileFragment : Fragment() {
         editName.setText(user?.displayName)
 
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        createdText.text = getString(R.string.account_created_on) + " " +
-                           sdf.format(Date(user!!.metadata!!.creationTimestamp))
+        createdText.text = getString(R.string.account_created_on) + " " + sdf.format(Date(user!!.metadata!!.creationTimestamp))
 
         if (user.photoUrl != null) {
             Glide.with(requireContext())
@@ -139,21 +141,41 @@ class ProfileFragment : Fragment() {
         }
 
         deleteButton.setOnClickListener {
-            val spSignIn = requireContext().getSharedPreferences("SignIn", Context.MODE_PRIVATE)
-            val googleIdToken = spSignIn.getString("googleIdToken", null)
+            if (spSignIn.getBoolean("googleId", false)) {
+                val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(false)
+                    .setServerClientId("182714962194-qmouil19bv70nkts9hd2cq1el7dvcc11.apps.googleusercontent.com")
+                    .setAutoSelectEnabled(true)
+                    .build()
 
-            val user = FirebaseAuth.getInstance().currentUser
+                val request: GetCredentialRequest = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
 
-            if (googleIdToken != null) {
-                val authCredential = GoogleAuthProvider.getCredential(googleIdToken, null)
-                user?.reauthenticate(authCredential)?.addOnCompleteListener { reauthTask ->
-                    if (reauthTask.isSuccessful) {
-                        Toast.makeText(requireContext(),
-                            getString(R.string.account_deleted), Toast.LENGTH_SHORT).show()
-                        proceedToDeleteAccount(spSignIn)
-                    } else {
-                        Toast.makeText(requireContext(),
-                            getString(R.string.error), Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        val result = CredentialManagerSingleton.credentialManager.getCredential(
+                            request = request,
+                            context = requireContext()
+                        )
+                        val credential = result.credential
+                        val googleIdTokenCredential =
+                            GoogleIdTokenCredential.createFrom(credential.data)
+
+                        // Get an AuthCredential from the Google ID token
+                        val authCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
+                        user.reauthenticate(authCredential).addOnCompleteListener { reauthTask ->
+                            if (reauthTask.isSuccessful) {
+                                Toast.makeText(requireContext(),
+                                    getString(R.string.account_deleted), Toast.LENGTH_SHORT).show()
+                                proceedToDeleteAccount(spSignIn)
+                            } else {
+                                Toast.makeText(requireContext(),
+                                    getString(R.string.error), Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } catch (e: androidx.credentials.exceptions.GetCredentialException) {
+                        Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
@@ -179,7 +201,7 @@ class ProfileFragment : Fragment() {
                     if (isConfirmed && password.isNotEmpty()) {
                         val credential = EmailAuthProvider.getCredential(emailText.text.toString(), password)
 
-                        user?.reauthenticate(credential)?.addOnCompleteListener { reauthTask ->
+                        user.reauthenticate(credential).addOnCompleteListener { reauthTask ->
                             if (reauthTask.isSuccessful) {
                                 deleteButton.visibility = View.VISIBLE
                                 progressBarConfirmation.visibility = View.GONE
@@ -204,8 +226,7 @@ class ProfileFragment : Fragment() {
                 dialog.show()
             }
         }
-
-
+        
         checkButton.setOnClickListener {
             if (editName.text.trim().toString() != user.displayName.toString()) {
                 progressBarSettings.visibility = View.VISIBLE

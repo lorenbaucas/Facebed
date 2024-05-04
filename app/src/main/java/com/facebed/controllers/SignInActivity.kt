@@ -22,14 +22,10 @@ import com.facebed.utils.Utils
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.firebase.Firebase
-import com.google.firebase.appcheck.appCheck
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.initialize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -76,11 +72,6 @@ class SignInActivity : AppCompatActivity() {
 
         progressBarEmail = findViewById(R.id.progress_bar_email)
         progressBarGoogle = findViewById(R.id.progress_bar_google)
-
-        Firebase.initialize(context = this)
-        Firebase.appCheck.installAppCheckProviderFactory(
-            PlayIntegrityAppCheckProviderFactory.getInstance(),
-        )
 
         spSignIn = getSharedPreferences("SignIn", Context.MODE_PRIVATE)
         // Initialize the credentialManager property
@@ -174,7 +165,7 @@ class SignInActivity : AppCompatActivity() {
                 // Get an AuthCredential from the Google ID token
                 val authCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
 
-                spSignIn.edit { putString("googleIdToken", googleIdTokenCredential.idToken) }
+                spSignIn.edit { putBoolean("googleId", true) }
 
                 // Register credentials in FirebaseAuth
                 FirebaseAuth.getInstance().signInWithCredential(authCredential)

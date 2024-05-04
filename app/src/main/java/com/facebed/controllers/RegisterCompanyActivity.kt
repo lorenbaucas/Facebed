@@ -86,6 +86,7 @@ class RegisterCompanyActivity : AppCompatActivity() {
                                                         "email" to email,
                                                         "companyName" to name,
                                                         "fic" to fic,
+                                                        "earnings" to 0,
                                                         "isCompany" to true
                                                     )
 

@@ -47,4 +47,8 @@
     <string name="updated_name">Nombre actualizado</string>
     <string name="permission_not_granted">Por favor da permiso para cambiar su foto de perfil</string>
     <string name="updated_photo">Foto actualizada</string>
+    <string name="earnings">Ganancias</string>
+    <string name="home">Inicio</string>
+    <string name="events">Eventos</string>
+    <string name="profile">Perfil</string>
 </resources>

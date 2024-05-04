@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.facebed.R
 
-class HomeCompanyFragment : Fragment() {
+class EventsCompanyFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? { return inflater.inflate(R.layout.home_company_fragment, container, false) }
+    ): View? { return inflater.inflate(R.layout.events_company_fragment, container, false) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

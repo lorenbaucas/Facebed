@@ -47,5 +47,8 @@
     <string name="error">We are sorry, there was an error</string>
     <string name="my_ratings">My ratings</string>
     <string name="phone_number">Phone number</string>
-
+    <string name="earnings">Earnings</string>
+    <string name="home">Home</string>
+    <string name="events">Events</string>
+    <string name="profile">Profile</string>
 </resources>
