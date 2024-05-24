@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AddRoomActivity">
+
+    <AutoCompleteTextView
+        android:id="@+id/room_name_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@android:color/transparent"
+        android:drawableStart="@drawable/baseline_edit_24"
+        android:drawablePadding="8dp"
+        android:ems="10"
+        android:hint="@string/room_name"
+        android:inputType="textAutoComplete"
+        android:maxLength="100"
+        android:minHeight="48dp"
+        android:textSize="20sp"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/people_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@android:color/transparent"
+        android:drawableStart="@drawable/baseline_people_24"
+        android:drawablePadding="8dp"
+        android:ems="10"
+        android:hint="@string/max_people"
+        android:digits="0123456789"
+        android:inputType="number"
+        android:maxLength="2"
+        android:minHeight="48dp"
+        android:textSize="20sp"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/room_name_text" />
+
+    <EditText
+        android:id="@+id/room_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@android:color/transparent"
+        android:drawableStart="@drawable/baseline_door_front_24"
+        android:drawablePadding="8dp"
+        android:ems="10"
+        android:hint="@string/room_number"
+        android:digits="0123456789"
+        android:inputType="number"
+        android:maxLength="4"
+        android:maxLines="1"
+        android:minHeight="48dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/people_number" />
+
+    <EditText
+        android:id="@+id/room_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@android:color/transparent"
+        android:digits="0123456789"
+        android:drawableStart="@drawable/baseline_price_change_24"
+        android:drawablePadding="8dp"
+        android:ems="10"
+        android:hint="@string/price_per_night"
+        android:inputType="number"
+        android:maxLength="5"
+        android:maxLines="1"
+        android:minHeight="48dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/room_number" />
+
+    <Button
+        android:id="@+id/add_photos_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="#10000000"
+        android:drawableLeft="@drawable/baseline_add_photo_alternate_24"
+        android:drawableTint="?attr/colorOnSurface"
+        android:text="@string/add_photos"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/room_price" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_images"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_photos_button" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="20dp"
+        android:visibility="gone"
+        app:chipSpacingVertical="-5dp"
+        app:chipSpacingHorizontal="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_images">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/hot_tub"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hot_tub"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/air_conditioning"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/air_conditioning"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/minibar"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/minibar"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/balcony_terrace"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/balcony_terrace"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/heating"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/heating"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/tv"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tv"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/breakfast"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/breakfast"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/wifi"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wifi"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/microwave"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/microwave"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/ceiling_fan"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ceiling_fan"
+            android:textColor="?attr/colorOnSurface"
+            app:chipBackgroundColor="@drawable/chip_background_selector" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <Button
+        android:id="@+id/finish_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#10000000"
+        android:text="@string/finish"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chip_group" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:indeterminateTint="#0091F1"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chip_group" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

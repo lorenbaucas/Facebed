@@ -1,28 +1,28 @@
-package com.facebed.controllers
+package com.facebed.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.facebed.R
-import com.facebed.databinding.HomeCompanyActivityBinding
+import com.facebed.databinding.HomeActivityBinding
 import com.facebed.fragments.EventsCompanyFragment
 import com.facebed.fragments.HomeCompanyFragment
 import com.facebed.fragments.ProfileCompanyFragment
 import com.google.android.material.navigation.NavigationBarView
 
 class HomeCompanyActivity : AppCompatActivity() {
-    private lateinit var homeCompanyActivityBinding: HomeCompanyActivityBinding
+    private lateinit var homeActivityBinding: HomeActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.home_company_activity)
+        setContentView(R.layout.home_activity)
 
-        homeCompanyActivityBinding = HomeCompanyActivityBinding.inflate(layoutInflater)
-        setContentView(homeCompanyActivityBinding.root)
-        homeCompanyActivityBinding.bottomNavigationCompany.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED
+        homeActivityBinding = HomeActivityBinding.inflate(layoutInflater)
+        setContentView(homeActivityBinding.root)
+        homeActivityBinding.bottomNavigation.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED
         replaceFragment(HomeCompanyFragment())
 
-        homeCompanyActivityBinding.bottomNavigationCompany.setOnItemSelectedListener {
+        homeActivityBinding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_home -> replaceFragment(HomeCompanyFragment())
                 R.id.navigation_events -> replaceFragment(EventsCompanyFragment())

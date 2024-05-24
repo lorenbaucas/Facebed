@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.EventsCompanyFragment">
+    tools:context=".activities.HotelRoomsActivity">
 
     <Button
-        android:id="@+id/add_hotel_button"
+        android:id="@+id/add_room_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
@@ -18,38 +18,37 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/your_hotels_text" />
+        app:layout_constraintTop_toBottomOf="@+id/your_rooms_text" />
 
     <TextView
-        android:id="@+id/your_hotels_text"
+        android:id="@+id/your_rooms_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
         android:textSize="20sp"
-        android:text="@string/your_hotels"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/add_hotel_icon"
+        android:id="@+id/add_room_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_playlist_add_24"
-        app:layout_constraintBottom_toBottomOf="@+id/add_hotel_button"
-        app:layout_constraintEnd_toEndOf="@+id/add_hotel_button"
-        app:layout_constraintStart_toStartOf="@+id/add_hotel_button"
-        app:layout_constraintTop_toTopOf="@+id/add_hotel_button"
+        app:layout_constraintBottom_toBottomOf="@+id/add_room_button"
+        app:layout_constraintEnd_toEndOf="@+id/add_room_button"
+        app:layout_constraintStart_toStartOf="@+id/add_room_button"
+        app:layout_constraintTop_toTopOf="@+id/add_room_button"
         app:tint="?attr/colorOnSurface" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_hotels_company"
+        android:id="@+id/rv_hotel_rooms"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="140dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_hotel_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/add_room_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

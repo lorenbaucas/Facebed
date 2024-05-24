@@ -1,6 +1,7 @@
-package com.facebed.utils
+package com.facebed.controllers
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.widget.TextView
 import android.graphics.Color
 import android.graphics.LinearGradient
@@ -9,6 +10,8 @@ import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.MotionEvent
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
+import com.facebed.R
 
 class Utils {
     companion object {
@@ -58,6 +61,10 @@ class Utils {
                 }
                 false
             }
+        }
+
+        fun error(context: Context) {
+            Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
         }
     }
 }

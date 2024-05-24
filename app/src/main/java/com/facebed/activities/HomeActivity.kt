@@ -1,4 +1,4 @@
-package com.facebed.controllers
+package com.facebed.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

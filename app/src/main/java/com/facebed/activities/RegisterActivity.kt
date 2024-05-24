@@ -1,4 +1,4 @@
-package com.facebed.controllers
+package com.facebed.activities
 
 import android.app.ActivityOptions
 import android.content.Context
@@ -13,7 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.facebed.R
-import com.facebed.utils.Utils
+import com.facebed.controllers.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -111,11 +111,10 @@ class RegisterActivity : AppCompatActivity() {
                                                             ActivityOptions.makeSceneTransitionAnimation(this).toBundle()
                                                         )
                                                         finish()
-                                                    } else {
-                                                        Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show() } }
+                                                    } else { Utils.error(this) } }
                                         }
                                         .addOnFailureListener {
-                                            Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show()
+                                            Utils.error(this)
                                             loadingRegister() } }
                             }
                             .addOnFailureListener {

@@ -31,9 +31,9 @@ import androidx.credentials.GetCredentialRequest
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.facebed.R
-import com.facebed.controllers.CredentialManagerSingleton
-import com.facebed.controllers.SignInActivity
-import com.facebed.utils.Utils
+import com.facebed.activities.CredentialManagerSingleton
+import com.facebed.activities.SignInActivity
+import com.facebed.controllers.Utils
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.EmailAuthProvider
@@ -169,10 +169,7 @@ class ProfileFragment : Fragment() {
                                 Toast.makeText(requireContext(),
                                     getString(R.string.account_deleted), Toast.LENGTH_SHORT).show()
                                 proceedToDeleteAccount(spSignIn)
-                            } else {
-                                Toast.makeText(requireContext(),
-                                    getString(R.string.error), Toast.LENGTH_SHORT).show()
-                            }
+                            } else { Utils.error(requireContext()) }
                         }
                     } catch (e: androidx.credentials.exceptions.GetCredentialException) {
                         Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
@@ -259,8 +256,7 @@ class ProfileFragment : Fragment() {
                             progressBarSettings.visibility = View.GONE
                             cardViewProfile.visibility = View.VISIBLE
                             cardViewSettings.visibility = View.GONE
-                            Toast.makeText(requireContext(), getString(R.string.error),
-                                Toast.LENGTH_SHORT).show()
+                            Utils.error(requireContext())
                         }
                     }
             } else {
@@ -273,9 +269,7 @@ class ProfileFragment : Fragment() {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                intent.type = "image/*"
-                imagePickerLauncher.launch(intent)
+                openImagePicker()
             } else {
                 Toast.makeText(requireContext(), getString(R.string.permission_not_granted),
                     Toast.LENGTH_SHORT).show()
@@ -293,9 +287,7 @@ class ProfileFragment : Fragment() {
                 PackageManager.PERMISSION_GRANTED) {
                 requestPermissionLauncher.launch(permission)
             } else {
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                intent.type = "image/*"
-                imagePickerLauncher.launch(intent)
+                openImagePicker()
             }
         }
 
@@ -330,8 +322,7 @@ class ProfileFragment : Fragment() {
                                             Toast.LENGTH_SHORT).show()
                                         profileImage.visibility = View.VISIBLE
                                     } else {
-                                        Toast.makeText(requireContext(), getString(R.string.error),
-                                            Toast.LENGTH_SHORT).show()
+                                        Utils.error(requireContext())
                                         profileImage.visibility = View.VISIBLE
 
                                         Glide.with(this)
@@ -342,8 +333,7 @@ class ProfileFragment : Fragment() {
                         }
                     }.addOnFailureListener {
                         profileImage.visibility = View.VISIBLE
-                        Toast.makeText(requireContext(), getString(R.string.error),
-                            Toast.LENGTH_SHORT).show()
+                        Utils.error(requireContext())
                     }
                 }
             }
@@ -365,11 +355,15 @@ class ProfileFragment : Fragment() {
                         spSignIn.edit().clear().apply()
                         startActivity(Intent(requireContext(), SignInActivity::class.java))
                         requireActivity().finish()
-                    } else {
-                        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
-                    }
+                    } else { Utils.error(requireContext()) }
                 }
             }
         }
+    }
+
+    private fun openImagePicker() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        imagePickerLauncher.launch(intent)
     }
 }

@@ -29,8 +29,8 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.facebed.R
-import com.facebed.controllers.SignInActivity
-import com.facebed.utils.Utils
+import com.facebed.activities.SignInActivity
+import com.facebed.controllers.Utils
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -137,7 +137,6 @@ class ProfileCompanyFragment : Fragment() {
             spSignIn.edit().clear().apply()
             startActivity(Intent(requireContext(), SignInActivity::class.java))
             requireActivity().finish()
-
         }
 
         deleteButton.setOnClickListener {
@@ -181,6 +180,8 @@ class ProfileCompanyFragment : Fragment() {
                                     .child(user.uid).delete()
                                 FirebaseFirestore.getInstance().collection("User")
                                     .document(user.uid).delete()
+                                FirebaseFirestore.getInstance().collection("Hotels")
+                                    .document(user.uid).delete()
                             } finally {
                                 user.delete().addOnCompleteListener { deleteTask ->
                                     if (deleteTask.isSuccessful) {
@@ -192,13 +193,7 @@ class ProfileCompanyFragment : Fragment() {
                                             )
                                         )
                                         requireActivity().finish()
-                                    } else {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            getString(R.string.error),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                                    } else { Utils.error(requireContext()) }
                                 }
                             }
                         } else {
@@ -257,10 +252,7 @@ class ProfileCompanyFragment : Fragment() {
                             progressBarSettings.visibility = View.GONE
                             cardViewProfileCompany.visibility = View.VISIBLE
                             cardViewSettingsCompany.visibility = View.GONE
-                            Toast.makeText(
-                                requireContext(), getString(R.string.error),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Utils.error(requireContext())
                         }
                     }
             } else {
@@ -338,10 +330,7 @@ class ProfileCompanyFragment : Fragment() {
                                         ).show()
                                         profileImage.visibility = View.VISIBLE
                                     } else {
-                                        Toast.makeText(
-                                            requireContext(), getString(R.string.error),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        Utils.error(requireContext())
                                         profileImage.visibility = View.VISIBLE
 
                                         Glide.with(this)
@@ -352,10 +341,7 @@ class ProfileCompanyFragment : Fragment() {
                         }
                     }.addOnFailureListener {
                         profileImage.visibility = View.VISIBLE
-                        Toast.makeText(
-                            requireContext(), getString(R.string.error),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Utils.error(requireContext())
                     }
                 }
             }

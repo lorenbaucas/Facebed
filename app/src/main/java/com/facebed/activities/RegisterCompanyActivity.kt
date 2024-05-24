@@ -1,4 +1,4 @@
-package com.facebed.controllers
+package com.facebed.activities
 
 import android.app.ActivityOptions
 import android.content.Context
@@ -13,7 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.facebed.R
-import com.facebed.utils.Utils
+import com.facebed.controllers.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -86,7 +86,7 @@ class RegisterCompanyActivity : AppCompatActivity() {
                                                         "email" to email,
                                                         "companyName" to name,
                                                         "fic" to fic,
-                                                        "earnings" to 0,
+                                                        "earnings" to 100,
                                                         "isCompany" to true
                                                     )
 

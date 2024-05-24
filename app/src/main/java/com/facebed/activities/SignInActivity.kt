@@ -1,4 +1,4 @@
-package com.facebed.controllers
+package com.facebed.activities
 
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
@@ -18,7 +18,7 @@ import androidx.core.content.edit
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.facebed.R
-import com.facebed.utils.Utils
+import com.facebed.controllers.Utils
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -201,12 +201,12 @@ class SignInActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-                            .addOnFailureListener {Toast.makeText(this@SignInActivity,
-                                getString(R.string.error), Toast.LENGTH_SHORT).show()
+                            .addOnFailureListener {
+                                Utils.error(this@SignInActivity)
                                 loadingGoogle()}
                     }
-                }.addOnFailureListener { Toast.makeText(this@SignInActivity,
-                    getString(R.string.error), Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Utils.error(this@SignInActivity)
                     loadingGoogle()}
             } catch (e: androidx.credentials.exceptions.GetCredentialException) {
                 Toast.makeText(this@SignInActivity, e.message, Toast.LENGTH_SHORT).show()
