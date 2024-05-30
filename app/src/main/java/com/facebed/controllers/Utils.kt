@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import com.facebed.R
+import com.google.android.material.chip.Chip
 
 class Utils {
     companion object {
@@ -61,6 +62,36 @@ class Utils {
                 }
                 false
             }
+        }
+
+        fun getHotelServiceKeys(): Map<String, Int> {
+            return mapOf(
+                "swimming_pool" to R.string.swimming_pool,
+                "restaurant" to R.string.restaurant,
+                "spa" to R.string.spa,
+                "adults_only" to R.string.adults_only,
+                "gym" to R.string.gym,
+                "water_park" to R.string.water_park,
+                "bowling" to R.string.bowling,
+                "padel_courts" to R.string.padel_courts,
+                "seafront" to R.string.seafront,
+                "rural" to R.string.rural
+            )
+        }
+
+        fun getRoomServiceKeys(): Map<String, Int> {
+            return mapOf(
+                "hot_tub" to R.string.hot_tub,
+                "air_conditioning" to R.string.air_conditioning,
+                "minibar" to R.string.minibar,
+                "balcony_terrace" to R.string.balcony_terrace,
+                "heating" to R.string.heating,
+                "tv" to R.string.tv,
+                "breakfast" to R.string.breakfast,
+                "wifi" to R.string.wifi,
+                "microwave" to R.string.microwave,
+                "ceiling_fan" to R.string.ceiling_fan
+            )
         }
 
         fun error(context: Context) {

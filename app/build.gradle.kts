@@ -87,7 +87,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
-
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 }

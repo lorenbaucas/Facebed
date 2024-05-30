@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.facebed.R
 import com.facebed.adapters.HotelRoomsAdapter
-import com.facebed.adapters.Room
 import com.facebed.controllers.Utils
+import com.facebed.models.SimpleRoom
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -20,7 +20,7 @@ class HotelRoomsActivity : AppCompatActivity() {
     private lateinit var addRoomButton: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var roomsAdapter: HotelRoomsAdapter
-    private lateinit var roomList: MutableList<Room>
+    private lateinit var roomList: MutableList<SimpleRoom>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,14 +36,14 @@ class HotelRoomsActivity : AppCompatActivity() {
         addRoomButton.setOnClickListener {
             startActivity(
                 Intent(this, AddRoomActivity::class.java)
-                    .putExtra("hotelName", title.text.trim().toString())
+                    .putExtra("hotelName", intent.getStringExtra("hotelName"))
+                    .putExtra("hotelId", intent.getStringExtra("hotelId"))
             )
         }
 
         roomList = mutableListOf()
         roomsAdapter = HotelRoomsAdapter(roomList)
-
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = roomsAdapter
 
         loadRoomData()
@@ -54,21 +54,21 @@ class HotelRoomsActivity : AppCompatActivity() {
         val userUid = user?.uid
 
         val firestore = FirebaseFirestore.getInstance()
-        val hotelsCollectionRef = firestore.collection("Rooms")
+        val roomsCollectionRef = firestore.collection("Rooms")
 
-        val hotelName = intent.getStringExtra("hotelName")
-        hotelsCollectionRef.get().addOnSuccessListener { result ->
+        val hotelId = intent.getStringExtra("hotelId")
+        roomsCollectionRef.get().addOnSuccessListener { result ->
             for (document in result) {
                 val roomName = document.getString("roomName").toString()
-                val number = document.getString("roomNumber").toString()
+                val number = document.getString("number").toString()
                 val roomUserUid = document.getString("userUid").toString()
 
                 if (roomUserUid == userUid) {
                     val imageRef = FirebaseStorage.getInstance().reference
-                        .child("HotelsData/$userUid/$hotelName/$roomName/image_0.jpg")
+                        .child("HotelsData/$userUid/$hotelId/$number/image_0.jpg")
 
                     imageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val room = Room(roomName, number, uri)
+                        val room = SimpleRoom(roomName, number, uri)
                         roomList.add(room)
                         roomsAdapter.notifyDataSetChanged()
                     }

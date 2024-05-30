@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.facebed.R
-import com.facebed.adapters.ImagesAdapter
+import com.facebed.adapters.AddImagesAdapter
 import com.facebed.controllers.Utils
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -40,7 +40,7 @@ class AddRoomActivity : AppCompatActivity() {
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
 
     private lateinit var imageUris: MutableList<Uri>
-    private lateinit var imagesAdapter: ImagesAdapter
+    private lateinit var imagesAdapter: AddImagesAdapter
     private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ class AddRoomActivity : AppCompatActivity() {
         chipGroup = findViewById(R.id.chip_group)
 
         imageUris = mutableListOf()
-        imagesAdapter = ImagesAdapter(imageUris)
+        imagesAdapter = AddImagesAdapter(imageUris)
 
         recyclerView = findViewById(R.id.rv_images)
 
@@ -90,17 +90,21 @@ class AddRoomActivity : AppCompatActivity() {
         finishButton.setOnClickListener {
             val roomName = roomNameText.text.toString().trim()
             val maxPeople = maxPeopleNumber.text.toString().trim()
-            val room = roomNumber.text.toString().trim()
+            val number = roomNumber.text.toString().trim()
             val price = roomPrice.text.toString().trim()
 
             if (roomName.isNotEmpty()) {
                 if (maxPeople.isNotEmpty()) {
-                    if (room.isNotEmpty()) {
+                    if (number.isNotEmpty()) {
                         if (price.isNotEmpty()) {
                             progressBar.visibility = View.VISIBLE
                             finishButton.visibility = View.GONE
 
+                            val hotelId = intent.getStringExtra("hotelId").toString()
+
                             val services = hashMapOf(
+                                "hotelId" to hotelId,
+                                "number" to number,
                                 "hot_tub" to findViewById<Chip>(R.id.hot_tub).isChecked,
                                 "air_conditioning" to findViewById<Chip>(R.id.air_conditioning).isChecked,
                                 "minibar" to findViewById<Chip>(R.id.minibar).isChecked,
@@ -113,19 +117,18 @@ class AddRoomActivity : AppCompatActivity() {
                                 "ceiling_fan" to findViewById<Chip>(R.id.ceiling_fan).isChecked
                             )
 
-                            val hotelName = intent.getStringExtra("hotelName").toString()
-                            val hotelId = intent.getStringExtra("hotelId").toString()
+
                             val servicesDocumentRef =
                                 firestore.collection("RoomServices").document()
                             servicesDocumentRef.set(services)
                                 .addOnSuccessListener {
                                     val roomData = hashMapOf(
                                         "userUid" to userUid,
-                                        "hotelName" to hotelName,
+                                        "hotelId" to hotelId,
                                         "roomName" to roomName,
                                         "maxPeople" to maxPeople,
-                                        "roomNumber" to room,
-                                        "roomPrice" to price
+                                        "number" to number,
+                                        "price" to price
                                     )
 
                                     val roomDocumentRef =
@@ -133,7 +136,7 @@ class AddRoomActivity : AppCompatActivity() {
                                     roomDocumentRef.set(roomData)
                                         .addOnSuccessListener {
                                             val storageRef = FirebaseStorage.getInstance().reference
-                                                .child("HotelsData/$userUid/$hotelId/$roomName")
+                                                .child("HotelsData/$userUid/$hotelId/$number")
 
                                             imageUris.forEachIndexed { index, uri ->
                                                 val imageRef = storageRef.child("image_$index.jpg")

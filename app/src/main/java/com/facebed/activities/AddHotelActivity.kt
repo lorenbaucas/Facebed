@@ -20,11 +20,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.facebed.R
-import com.facebed.adapters.ImagesAdapter
+import com.facebed.adapters.AddImagesAdapter
 import com.facebed.controllers.FirebaseController
-import com.facebed.fragments.EventsCompanyFragment
 import com.facebed.controllers.Utils
-import com.google.android.gms.tasks.Tasks
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.firebase.auth.FirebaseAuth
@@ -52,7 +50,7 @@ class AddHotelActivity : AppCompatActivity() {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     private val imageUris: MutableList<Uri> = mutableListOf()
-    private lateinit var imagesAdapter: ImagesAdapter
+    private lateinit var imagesAdapter: AddImagesAdapter
     private lateinit var recyclerView: RecyclerView
 
     private lateinit var initialHotelData: HashMap<String, Any?>
@@ -77,14 +75,9 @@ class AddHotelActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.rv_images)
 
         val firestore = FirebaseFirestore.getInstance()
-        val user = FirebaseAuth.getInstance().currentUser
-        val userUid = user?.uid
+        val userUid = FirebaseAuth.getInstance().currentUser?.uid
 
-        //FirebaseController.getHotelId(userUid, hotelName) { hotelId ->
-          //  if (hotelId != null) {
-
-        imagesAdapter = ImagesAdapter(imageUris)
-
+        imagesAdapter = AddImagesAdapter(imageUris)
         recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = imagesAdapter
@@ -127,30 +120,20 @@ class AddHotelActivity : AppCompatActivity() {
                             finishButton.visibility = View.VISIBLE
                         }
 
-                        val servicesCollectionRef = firestore.collection("HotelServices")
-                        servicesCollectionRef
-                            .whereEqualTo("userUid", userUid)
-                            .whereEqualTo("hotelName", hotelName)
-                            .get()
-                            .addOnSuccessListener { querySnapshot ->
-                                if (!querySnapshot.isEmpty) {
-                                    val documentSnapshot = querySnapshot.documents[0]
-
-                                    val servicesData = hashMapOf<String, Any?>()
-
-                                    documentSnapshot.data?.forEach { (key, value) ->
-                                        if (key != "userUid" || key != "hotelName") {
-                                            val chip = chipGroup.findViewWithTag<Chip>(key)
-                                            chip?.isChecked = value as Boolean
-                                            servicesData[key] = value
-                                        }
-                                    }
-                                    initialServicesData = servicesData
-                                }
-
+                        FirebaseController.getHotelServices(userUid!!, hotelId) { documentSnapshot ->
                             chipGroup.visibility = View.VISIBLE
-                        }.addOnFailureListener { Utils.error(this) }
-                    } else { Utils.error(this) }
+                            val servicesData = hashMapOf<String, Any?>()
+
+                            documentSnapshot?.data?.forEach { (key, value) ->
+                                if (key != "userUid" || key != "hotelName") {
+                                    val chip = chipGroup.findViewWithTag<Chip>(key)
+                                    chip?.isChecked = value as Boolean
+                                    servicesData[key] = value
+                                }
+                            }
+                            initialServicesData = servicesData
+                        }
+                    }
                 }
         }
 
@@ -163,101 +146,60 @@ class AddHotelActivity : AppCompatActivity() {
                 "userUid" to userUid
             )
 
-            val updatedServicesData = hashMapOf(
-                "userUid" to userUid,
-                "hotelName" to hotelNameText.text.toString().trim(),
-                "swimming_pool" to findViewById<Chip>(R.id.swimming_pool).isChecked,
-                "restaurant" to findViewById<Chip>(R.id.restaurant).isChecked,
-                "spa" to findViewById<Chip>(R.id.spa).isChecked,
-                "adults_only" to findViewById<Chip>(R.id.adults_only).isChecked,
-                "gym" to findViewById<Chip>(R.id.gym).isChecked,
-                "water_park" to findViewById<Chip>(R.id.water_park).isChecked,
-                "bowling" to findViewById<Chip>(R.id.bowling).isChecked,
-                "padel_courts" to findViewById<Chip>(R.id.padel_courts).isChecked,
-                "seafront" to findViewById<Chip>(R.id.seafront).isChecked,
-                "rural" to findViewById<Chip>(R.id.rural).isChecked
-            )
-
             if (imageUris.size >= 5) {
                 progressBar.visibility = View.VISIBLE
                 finishButton.visibility = View.GONE
                 val hotelName = initialHotelData["hotelName"] as String
+                var hotelId: String?
 
-                val updateHotelDataTask = if (initialHotelData != updatedHotelData) {
-                    val hotelsCollectionRef = firestore.collection("Hotels")
-                    hotelsCollectionRef
-                        .whereEqualTo("userUid", userUid)
-                        .whereEqualTo("hotelName", hotelName)
-                        .get()
-                        .continueWithTask { task ->
-                            val querySnapshot = task.result
-                            if (!querySnapshot.isEmpty) {
-                                val documentSnapshot = querySnapshot.documents[0]
-                                val hotelDocumentRef =
-                                    hotelsCollectionRef.document(documentSnapshot.id)
+                FirebaseController.getHotel(userUid!!, hotelName) { documentSnapshot ->
+                    documentSnapshot?.let {
+                        hotelId = it.id
+                        val hotelDocumentRef = it.reference
 
-                                val hotelId = hotelDocumentRef.id
-                                hotelDocumentRef.update(updatedHotelData).addOnSuccessListener {
-                                    val storageRef = FirebaseStorage.getInstance().reference
-                                        .child("HotelsData/$userUid/$hotelId/MainPhotos")
+                        val updateHotelDataTask = hotelDocumentRef.update(updatedHotelData).addOnSuccessListener {
+                            val storageRef = FirebaseStorage.getInstance().reference
+                                .child("HotelsData/$userUid/$hotelId/MainPhotos")
 
-                                    FirebaseController.uploadImages(storageRef, imageUris) {}
-                                }
-                            } else { Tasks.forResult(null) }
-                        }
-                } else { Tasks.forResult(null) }
+                            FirebaseController.uploadImages(storageRef, imageUris) {}
+                        }.addOnFailureListener { Utils.error(this) }
 
-                val updateServicesDataTask = if (initialServicesData != updatedServicesData) {
-                    finishButton.visibility = View.GONE
-                    progressBar.visibility = View.VISIBLE
+                        updateHotelDataTask.addOnSuccessListener {
+                            val updatedServicesData = getServices(userUid, hotelId!!)
 
-                    val hotelName = initialHotelData["hotelName"] as String
-                    val updatedHotelName = updatedHotelData["hotelName"] as String
-                    val servicesCollectionRef = firestore.collection("HotelServices")
+                            if (initialServicesData != updatedServicesData) {
+                                val updatedHotelName = updatedHotelData["hotelName"] as String
+                                FirebaseController.getHotelServices(userUid, hotelId!!) { documentSnapshot ->
+                                    documentSnapshot?.let {
+                                        val servicesDocumentRef = it.reference
+                                        val servicesDataToUpdate = hashMapOf<String, Any?>()
+                                        updatedServicesData.forEach { (key, value) ->
+                                            if (key != "userUid" && key != "hotelName") {
+                                                servicesDataToUpdate[key] = value
+                                            }
+                                        }
+                                        servicesDataToUpdate["hotelName"] = updatedHotelName
+                                        val updateServicesDataTask = servicesDocumentRef.update(servicesDataToUpdate)
 
-                    servicesCollectionRef
-                        .whereEqualTo("userUid", userUid)
-                        .whereEqualTo("hotelName", hotelName)
-                        .get()
-                        .continueWithTask { task ->
-                            val querySnapshot = task.result
-                            if (!querySnapshot.isEmpty) {
-                                val documentSnapshot = querySnapshot.documents[0]
-                                val servicesDocumentRef =
-                                    servicesCollectionRef.document(documentSnapshot.id)
-                                val servicesDataToUpdate = hashMapOf<String, Any?>()
-                                updatedServicesData.forEach { (key, value) ->
-                                    if (key != "userUid" && key != "hotelName") {
-                                        servicesDataToUpdate[key] = value
+                                        updateServicesDataTask.addOnSuccessListener {
+                                            Toast.makeText(
+                                                this,
+                                                getString(R.string.data_saved_successfully),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            startActivity(Intent(this, HomeCompanyActivity::class.java))
+                                            finish()
+                                        }.addOnFailureListener {
+                                            progressBar.visibility = View.GONE
+                                            finishButton.visibility = View.VISIBLE
+                                            Utils.error(this)
+                                        }
                                     }
-
-                                    servicesDataToUpdate["hotelName"] = updatedHotelName
                                 }
-
-                                servicesDocumentRef.update(servicesDataToUpdate)
-                            } else {
-                                Tasks.forResult(null)
                             }
                         }
-                } else {
-                    Tasks.forResult(null)
+                    }
                 }
-
-                Tasks.whenAll(updateHotelDataTask, updateServicesDataTask)
-                    .addOnSuccessListener {
-                        Toast.makeText(
-                            this,
-                            getString(R.string.data_saved_successfully),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        startActivity(Intent(this, EventsCompanyFragment::class.java))
-                        finish()
-                    }
-                    .addOnFailureListener {
-                        progressBar.visibility = View.GONE
-                        finishButton.visibility = View.VISIBLE
-                        Utils.error(this)
-                    }
             }
         }
 
@@ -305,48 +247,34 @@ class AddHotelActivity : AppCompatActivity() {
                         progressBar.visibility = View.VISIBLE
                         nextButton.visibility = View.GONE
 
-                        val services = hashMapOf(
+                        val hotelData = hashMapOf(
                             "userUid" to userUid,
                             "hotelName" to hotelName,
-                            "swimming_pool" to findViewById<Chip>(R.id.swimming_pool).isChecked,
-                            "restaurant" to findViewById<Chip>(R.id.restaurant).isChecked,
-                            "spa" to findViewById<Chip>(R.id.spa).isChecked,
-                            "adults_only" to findViewById<Chip>(R.id.adults_only).isChecked,
-                            "gym" to findViewById<Chip>(R.id.gym).isChecked,
-                            "water_park" to findViewById<Chip>(R.id.water_park).isChecked,
-                            "bowling" to findViewById<Chip>(R.id.bowling).isChecked,
-                            "padel_courts" to findViewById<Chip>(R.id.padel_courts).isChecked,
-                            "seafront" to findViewById<Chip>(R.id.seafront).isChecked,
-                            "rural" to findViewById<Chip>(R.id.rural).isChecked
+                            "location" to location,
+                            "stars" to starCount,
+                            "description" to description
                         )
 
-                        val servicesDocumentRef =
-                            firestore.collection("HotelServices").document()
-                        servicesDocumentRef.set(services)
+                        val hotelDocumentRef =
+                            firestore.collection("Hotels").document()
+
+                        hotelDocumentRef.set(hotelData)
                             .addOnSuccessListener {
-                                val hotelData = hashMapOf(
-                                    "userUid" to userUid,
-                                    "hotelName" to hotelName,
-                                    "location" to location,
-                                    "stars" to starCount,
-                                    "description" to description
-                                )
+                                val hotelId = hotelDocumentRef.id
+                                val storageRef = FirebaseStorage.getInstance().reference
+                                    .child("HotelsData/$userUid/$hotelId/MainPhotos")
 
-                                val hotelDocumentRef =
-                                    firestore.collection("Hotels").document()
+                                FirebaseController.uploadImages(storageRef, imageUris) {
+                                    val services = getServices(userUid!!, hotelId)
 
-                                hotelDocumentRef.set(hotelData)
-                                    .addOnSuccessListener {
-                                        val hotelId = hotelDocumentRef.id
-                                        val storageRef = FirebaseStorage.getInstance().reference
-                                            .child("HotelsData/$userUid/$hotelId/MainPhotos")
-
-                                        FirebaseController.uploadImages(storageRef, imageUris) {
+                                    val servicesDocumentRef =
+                                        firestore.collection("HotelServices").document()
+                                    servicesDocumentRef.set(services)
+                                        .addOnSuccessListener {
                                             Toast.makeText(this, getString(R.string.data_saved_successfully),
                                                 Toast.LENGTH_SHORT).show()
                                             startActivity(
                                                 Intent(this, AddRoomActivity::class.java)
-                                                    .putExtra("hotelName", hotelName)
                                                     .putExtra("hotelId", hotelId)
                                             )
                                             progressBar.visibility = View.GONE
@@ -354,12 +282,12 @@ class AddHotelActivity : AppCompatActivity() {
 
                                             finish()
                                         }
-                                    }
-                            }
-                            .addOnFailureListener {
-                                progressBar.visibility = View.GONE
-                                nextButton.visibility = View.VISIBLE
-                                Utils.error(this)
+                                        .addOnFailureListener {
+                                            progressBar.visibility = View.GONE
+                                            nextButton.visibility = View.VISIBLE
+                                            Utils.error(this)
+                                        }
+                                }
                             }
                     } else { Toast.makeText(this, getString(R.string.select_stars),
                         Toast.LENGTH_SHORT).show() }
@@ -426,5 +354,22 @@ class AddHotelActivity : AppCompatActivity() {
         }
 
         imagesAdapter.notifyDataSetChanged()
+    }
+
+    private fun getServices(userUid: String, hotelId: String): HashMap<String, Any> {
+        return hashMapOf(
+            "userUid" to userUid,
+            "hotelId" to hotelId,
+            "swimming_pool" to findViewById<Chip>(R.id.swimming_pool).isChecked,
+            "restaurant" to findViewById<Chip>(R.id.restaurant).isChecked,
+            "spa" to findViewById<Chip>(R.id.spa).isChecked,
+            "adults_only" to findViewById<Chip>(R.id.adults_only).isChecked,
+            "gym" to findViewById<Chip>(R.id.gym).isChecked,
+            "water_park" to findViewById<Chip>(R.id.water_park).isChecked,
+            "bowling" to findViewById<Chip>(R.id.bowling).isChecked,
+            "padel_courts" to findViewById<Chip>(R.id.padel_courts).isChecked,
+            "seafront" to findViewById<Chip>(R.id.seafront).isChecked,
+            "rural" to findViewById<Chip>(R.id.rural).isChecked
+        )
     }
 }

@@ -21,7 +21,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardview_register"
         android:layout_width="330dp"
         android:layout_height="330dp"
         android:layout_marginTop="30dp"

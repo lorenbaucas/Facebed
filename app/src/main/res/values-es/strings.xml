@@ -90,4 +90,5 @@
     <string name="price_per_night">Precio por noche</string>
     <string name="provide_price_per_night">Proporciona un precio por noche</string>
     <string name="updated_data">Datos actualizados</string>
+    <string name="book">Reservar</string>
 </resources>

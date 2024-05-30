@@ -63,11 +63,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.HotelViewActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.HotelRoomsActivity"
-            android:screenOrientation="portrait"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.FullScreenImageActivity"
             android:exported="false" />
     </application>
 

@@ -46,7 +46,7 @@ class FirebaseController {
             }
         }
 
-        fun getHotelId(userUid: String, hotelName: String, onComplete: (DocumentSnapshot?) -> Unit) {
+        fun getHotel(userUid: String, hotelName: String, onComplete: (DocumentSnapshot?) -> Unit) {
             val hotelsCollectionRef = FirebaseFirestore.getInstance().collection("Hotels")
             hotelsCollectionRef
                 .whereEqualTo("userUid", userUid)
@@ -62,11 +62,38 @@ class FirebaseController {
                 }
         }
 
-        fun getHotelServicesId(userUid: String, hotelId: String, onComplete: (DocumentSnapshot?) -> Unit) {
+        fun getHotelServices(userUid: String, hotelId: String, onComplete: (DocumentSnapshot?) -> Unit) {
             val servicesCollectionRef = FirebaseFirestore.getInstance().collection("HotelServices")
             servicesCollectionRef
                 .whereEqualTo("userUid", userUid)
                 .whereEqualTo("hotelId", hotelId)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    if (!querySnapshot.isEmpty) {
+                        val documentSnapshot = querySnapshot.documents[0]
+                        onComplete(documentSnapshot)
+                    } else {
+                        onComplete(null)
+                    }
+                }
+        }
+
+        fun getRooms(hotelId: String, onComplete: (MutableList<DocumentSnapshot>) -> Unit) {
+            val roomsCollectionRef = FirebaseFirestore.getInstance().collection("Rooms")
+            roomsCollectionRef
+                .whereEqualTo("hotelId", hotelId)
+                .get()
+                .addOnSuccessListener {
+                    val documents = it.documents
+                    onComplete(documents)
+                }
+        }
+
+        fun getRoomServices(hotelId: String, number: String, onComplete: (DocumentSnapshot?) -> Unit) {
+            val servicesCollectionRef = FirebaseFirestore.getInstance().collection("RoomServices")
+            servicesCollectionRef
+                .whereEqualTo("hotelId", hotelId)
+                .whereEqualTo("number", number)
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     if (!querySnapshot.isEmpty) {

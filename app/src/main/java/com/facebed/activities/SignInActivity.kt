@@ -109,17 +109,19 @@ class SignInActivity : AppCompatActivity() {
 
         forgotPassword.setOnClickListener {
             val email = emailText.text.trim().toString()
-            AlertDialog.Builder(this)
-                .setTitle(getString(R.string.send_recovery))
-                .setMessage(email)
-                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                    Toast.makeText(this, getString(R.string.sent_recovery), Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
-                .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-                .create()
-                .show()
+            if (Utils.isEmailValid(email)) {
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.send_recovery))
+                    .setMessage(email)
+                    .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                        Toast.makeText(this, getString(R.string.sent_recovery), Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                    .create()
+                    .show()
+            }
         }
 
         createAccount.setOnClickListener {

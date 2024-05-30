@@ -10,9 +10,9 @@ import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.facebed.R
-import com.facebed.adapters.Hotel
 import com.facebed.adapters.HotelsCompanyAdapter
 import com.facebed.activities.AddHotelActivity
+import com.facebed.models.Hotel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -41,15 +41,14 @@ class EventsCompanyFragment : Fragment() {
         hotelList = mutableListOf()
         hotelsAdapter = HotelsCompanyAdapter(hotelList)
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = hotelsAdapter
 
         loadHotelData()
     }
 
     private fun loadHotelData() {
-        val user = FirebaseAuth.getInstance().currentUser
-        val userUid = user?.uid
+        val userUid = FirebaseAuth.getInstance().currentUser?.uid
 
         val firestore = FirebaseFirestore.getInstance()
         val hotelsCollectionRef = firestore.collection("Hotels")
@@ -67,13 +66,12 @@ class EventsCompanyFragment : Fragment() {
                         .child("HotelsData/$userUid/$hotelId/MainPhotos/image_0.jpg")
 
                     imageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val hotel = Hotel(hotelName, location, uri)
+                        val hotel = Hotel(hotelName, hotelId, location, uri)
                         hotelList.add(hotel)
                         hotelsAdapter.notifyDataSetChanged()
                     }.addOnFailureListener {}
                 }
             }
-        }.addOnFailureListener {}
+        }
     }
-
 }

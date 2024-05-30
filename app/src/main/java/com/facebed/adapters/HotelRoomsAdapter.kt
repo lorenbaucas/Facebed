@@ -1,7 +1,6 @@
 package com.facebed.adapters
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.facebed.R
 import com.facebed.activities.AddRoomActivity
+import com.facebed.models.SimpleRoom
 import de.hdodenhof.circleimageview.CircleImageView
 
-class HotelRoomsAdapter(private var rooms: MutableList<Room>) : RecyclerView.Adapter<HotelRoomsAdapter.RoomViewHolder>() {
+class HotelRoomsAdapter(private var rooms: MutableList<SimpleRoom>) : RecyclerView.Adapter<HotelRoomsAdapter.RoomViewHolder>() {
 
     class RoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val hotelName: TextView = itemView.findViewById(R.id.primary_text)
@@ -51,8 +51,3 @@ class HotelRoomsAdapter(private var rooms: MutableList<Room>) : RecyclerView.Ada
     override fun getItemCount(): Int = rooms.size
 }
 
-data class Room(
-    val name: String,
-    val number: String,
-    val imageUri: Uri
-)

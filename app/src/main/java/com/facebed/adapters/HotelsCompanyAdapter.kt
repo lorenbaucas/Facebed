@@ -1,7 +1,6 @@
 package com.facebed.adapters
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.facebed.R
 import com.facebed.activities.AddHotelActivity
 import com.facebed.activities.HotelRoomsActivity
+import com.facebed.models.Hotel
 import de.hdodenhof.circleimageview.CircleImageView
 
 class HotelsCompanyAdapter(private var hotels: MutableList<Hotel>) : RecyclerView.Adapter<HotelsCompanyAdapter.HotelViewHolder>() {
@@ -44,16 +44,11 @@ class HotelsCompanyAdapter(private var hotels: MutableList<Hotel>) : RecyclerVie
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, HotelRoomsActivity::class.java)
-            intent.putExtra("hotelName", hotel.name)
+                .putExtra("hotelName", hotel.name)
+                .putExtra("hotelId", hotel.hotelId)
             holder.itemView.context.startActivity(intent)
         }
     }
 
     override fun getItemCount(): Int = hotels.size
 }
-
-data class Hotel(
-    val name: String,
-    val location: String,
-    val imageUri: Uri
-)
