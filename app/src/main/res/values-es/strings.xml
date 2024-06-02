@@ -22,7 +22,7 @@
     <string name="password_not_valid">Al menos 8 caracteres incluyendo: 1 letra, 1 dígito, 1 carácter especial (._@$!#%^&amp;+=)</string>
     <string name="are_you_a_company">"¿Eres empresa? Regístrate "</string>
     <string name="here">aquí</string>
-    <string name="ok">Vale</string>
+    <string name="ok">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="sent_recovery">Recuperación de contraseña enviada</string>
     <string name="account_not_found">Cuenta no encontrada</string>
@@ -62,7 +62,7 @@
     <string name="select_stars">Selecciona cuántas estrellas tiene el hotel</string>
     <string name="max_people">Máximo de personas</string>
     <string name="room_name">Nombre de la habitación</string>
-    <string name="hot_tub">Hot tub</string>
+    <string name="hot_tub">Jacuzzi</string>
     <string name="air_conditioning">Aire acondicionado</string>
     <string name="minibar">Minibar</string>
     <string name="balcony_terrace">Balcón/Terraza</string>
@@ -91,4 +91,9 @@
     <string name="provide_price_per_night">Proporciona un precio por noche</string>
     <string name="updated_data">Datos actualizados</string>
     <string name="book">Reservar</string>
+    <string name="select_date">Por favor, seleccione una fecha</string>
+    <string name="booking_successful">Reserva confirmada</string>
+    <string name="make_reservation">Hacer reserva a nombre de:</string>
+    <string name="booking">Reserva</string>
+    <string name="booking_text">Al confirmar aceptas pagar el importe y estás en tu derecho de cancelar tu reserva en cualquier momento sin coste adicional.</string>
 </resources>

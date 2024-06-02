@@ -123,7 +123,7 @@ class HotelViewActivity : AppCompatActivity() {
                         val maxPeople = documentSnapshot.getString("maxPeople")
                         val price = documentSnapshot.getString("price")
 
-                        val room = Room(roomName!!, hotelId, number!!, maxPeople!!.toInt(), price!!.toInt())
+                        val room = Room(roomName!!, hotelId, number!!, maxPeople!!, price!!)
                         roomsList.add(room)
                         roomsList.sortWith(compareBy { it.price })
                     }

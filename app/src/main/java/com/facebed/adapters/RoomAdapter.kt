@@ -1,15 +1,16 @@
 package com.facebed.adapters
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.facebed.R
+import com.facebed.activities.BookActivity
 import com.facebed.activities.FullScreenImageActivity
 import com.facebed.controllers.FirebaseController
 import com.facebed.controllers.Utils
@@ -24,6 +25,7 @@ class RoomAdapter(private var rooms: MutableList<Room>) : RecyclerView.Adapter<R
         val roomData: TextView = itemView.findViewById(R.id.data_room_text)
         val rvRoomImages: RecyclerView = itemView.findViewById(R.id.rv_room_images)
         val rvRoomServices: RecyclerView = itemView.findViewById(R.id.rv_room_services)
+        val bookButton: Button = itemView.findViewById(R.id.book_button)
 
         init {
             rvRoomImages.layoutManager =
@@ -57,7 +59,6 @@ class RoomAdapter(private var rooms: MutableList<Room>) : RecyclerView.Adapter<R
             .addOnSuccessListener { querySnapshot ->
                 if (!querySnapshot.isEmpty) {
                     val documentSnapshot = querySnapshot.documents[0]
-                    val roomId = documentSnapshot.id
 
                     val hotelId = room.hotelId
                     val userUid = documentSnapshot.getString("userUid")
@@ -100,22 +101,21 @@ class RoomAdapter(private var rooms: MutableList<Room>) : RecyclerView.Adapter<R
                             }
                         }
 
-                        val servicesAdapter = ServicesAdapter(servicesList) {
-                            handleClick(holder.itemView.context, hotelId, number)
-                        }
+                        val servicesAdapter = ServicesAdapter(servicesList) {}
                         holder.rvRoomServices.adapter = servicesAdapter
-
-                        holder.itemView.setOnClickListener {
-                            handleClick(holder.itemView.context, hotelId, number)
-                        }
                     }
                 }
             }
+
+        holder.bookButton.setOnClickListener {
+            val intent = Intent(holder.itemView.context, BookActivity::class.java)
+            intent.putExtra("hotelId", room.hotelId)
+            intent.putExtra("roomId", room.number)
+            intent.putExtra("roomName", room.name)
+            intent.putExtra("price", room.price)
+            holder.itemView.context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int = rooms.size
-
-    private fun handleClick(context: Context, hotelId: String, roomId: String) {
-        //calendario
-    }
 }

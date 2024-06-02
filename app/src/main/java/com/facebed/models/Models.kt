@@ -19,6 +19,21 @@ data class Room(
     val name: String,
     val hotelId: String,
     val number: String,
-    val maxPeople: Int,
-    val price: Int,
+    val maxPeople: String,
+    val price: String,
 )
+
+data class Booking(
+    val userUid: String = "",
+    val hotelId: String = "",
+    val roomId: String = "",
+    val roomName: String = "",
+    val name: String = "",
+    val pending: Boolean = false,
+    val finalPrice: Double = 0.0,
+    val datesList: List<Date> = listOf()
+) {
+    data class Date(
+        val timeInMillis: Long = 0
+    )
+}

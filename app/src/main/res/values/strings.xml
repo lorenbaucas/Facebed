@@ -91,4 +91,9 @@
     <string name="seafront">Seafront</string>
     <string name="rural">Rural</string>
     <string name="book">Book</string>
+    <string name="booking">Booking</string>
+    <string name="select_date">Please, select a date</string>
+    <string name="booking_successful">Booking successful</string>
+    <string name="make_reservation">Make reservation in the name of:</string>
+    <string name="booking_text">By confirming you agree to pay the amount and you have the right to cancel your booking at any time at no additional cost.</string>
 </resources>

@@ -2,6 +2,7 @@ package com.facebed.activities
 
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.facebed.R
@@ -11,6 +12,7 @@ class FullScreenImageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.full_screen_image_activity)
 
         val imageView: PhotoView = findViewById(R.id.image)
