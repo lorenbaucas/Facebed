@@ -32,6 +32,7 @@ class BookActivity : AppCompatActivity() {
         nameText = findViewById(R.id.name_text)
 
         val hotelId = intent.getStringExtra("hotelId")
+        val hotelName = intent.getStringExtra("hotelName")
         val roomId = intent.getStringExtra("roomId")
         val roomName = intent.getStringExtra("roomName")
         val price = intent.getStringExtra("price")
@@ -73,13 +74,14 @@ class BookActivity : AppCompatActivity() {
                 dialog.setContentView(dialogView)
 
                 val priceText: TextView = dialogView.findViewById(R.id.price_text)
-                priceText.text = finalPrice.toString() + "€"
+                priceText.text = "$finalPrice€"
                 val okButton: Button = dialogView.findViewById(R.id.accept_button)
                 okButton.setOnClickListener {
 
                     val bookingData = hashMapOf(
                         "userUid" to userUid,
                         "hotelId" to hotelId,
+                        "hotelName" to hotelName,
                         "roomId" to roomId,
                         "roomName" to roomName,
                         "name" to nameText.text.toString(),
@@ -92,10 +94,16 @@ class BookActivity : AppCompatActivity() {
 
                     FirebaseFirestore.getInstance().collection("Bookings")
                         .add(bookingData)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, getString(R.string.booking_successful), Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, HomeActivity::class.java))
-                            finish()
+                        .addOnSuccessListener { documentReference ->
+                            val bookingId = documentReference.id
+                            FirebaseFirestore.getInstance().collection("Bookings")
+                                .document(bookingId)
+                                .update("bookingId", bookingId)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, getString(R.string.booking_successful), Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, HomeActivity::class.java))
+                                    finish()
+                                }
                         }
                 }
                 dialog.show()
@@ -104,5 +112,6 @@ class BookActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.select_date), Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 }

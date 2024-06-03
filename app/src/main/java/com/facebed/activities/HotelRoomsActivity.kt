@@ -62,15 +62,20 @@ class HotelRoomsActivity : AppCompatActivity() {
                 val roomName = document.getString("roomName").toString()
                 val number = document.getString("number").toString()
                 val roomUserUid = document.getString("userUid").toString()
+                val roomId = document.id
 
                 if (roomUserUid == userUid) {
                     val imageRef = FirebaseStorage.getInstance().reference
-                        .child("HotelsData/$userUid/$hotelId/$number/image_0.jpg")
+                        .child("HotelsData/$userUid/$hotelId/$roomId")
 
-                    imageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val room = SimpleRoom(roomName, number, uri)
-                        roomList.add(room)
-                        roomsAdapter.notifyDataSetChanged()
+                    imageRef.listAll().addOnSuccessListener { listResult ->
+                        if (listResult.items.isNotEmpty()) {
+                            listResult.items[0].downloadUrl.addOnSuccessListener { uri ->
+                                val room = SimpleRoom(roomName, number, uri)
+                                roomList.add(room)
+                                roomsAdapter.notifyDataSetChanged()
+                            }
+                        }
                     }
                 }
             }

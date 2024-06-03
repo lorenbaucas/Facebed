@@ -16,9 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Facebed"
         tools:targetApi="31">
-        <activity
-            android:name=".activities.BookActivity"
-            android:exported="false" />
 
         <service
             android:name=".controllers.CloudMessagingService"
@@ -75,6 +72,11 @@
         <activity
             android:name=".activities.FullScreenImageActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.BookActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

@@ -97,73 +97,77 @@ class AddRoomActivity : AppCompatActivity() {
                 if (maxPeople.isNotEmpty()) {
                     if (number.isNotEmpty()) {
                         if (price.isNotEmpty()) {
-                            progressBar.visibility = View.VISIBLE
-                            finishButton.visibility = View.GONE
+                            if (imageUris.size > 2) {
+                                progressBar.visibility = View.VISIBLE
+                                finishButton.visibility = View.GONE
 
-                            val hotelId = intent.getStringExtra("hotelId").toString()
+                                val hotelId = intent.getStringExtra("hotelId").toString()
 
-                            val services = hashMapOf(
-                                "hotelId" to hotelId,
-                                "number" to number,
-                                "hot_tub" to findViewById<Chip>(R.id.hot_tub).isChecked,
-                                "air_conditioning" to findViewById<Chip>(R.id.air_conditioning).isChecked,
-                                "minibar" to findViewById<Chip>(R.id.minibar).isChecked,
-                                "balcony_terrace" to findViewById<Chip>(R.id.balcony_terrace).isChecked,
-                                "heating" to findViewById<Chip>(R.id.heating).isChecked,
-                                "tv" to findViewById<Chip>(R.id.tv).isChecked,
-                                "breakfast" to findViewById<Chip>(R.id.breakfast).isChecked,
-                                "wifi" to findViewById<Chip>(R.id.wifi).isChecked,
-                                "microwave" to findViewById<Chip>(R.id.microwave).isChecked,
-                                "ceiling_fan" to findViewById<Chip>(R.id.ceiling_fan).isChecked
-                            )
+                                val services = hashMapOf(
+                                    "hotelId" to hotelId,
+                                    "userUid" to userUid,
+                                    "number" to number,
+                                    "hot_tub" to findViewById<Chip>(R.id.hot_tub).isChecked,
+                                    "air_conditioning" to findViewById<Chip>(R.id.air_conditioning).isChecked,
+                                    "minibar" to findViewById<Chip>(R.id.minibar).isChecked,
+                                    "balcony_terrace" to findViewById<Chip>(R.id.balcony_terrace).isChecked,
+                                    "heating" to findViewById<Chip>(R.id.heating).isChecked,
+                                    "tv" to findViewById<Chip>(R.id.tv).isChecked,
+                                    "breakfast" to findViewById<Chip>(R.id.breakfast).isChecked,
+                                    "wifi" to findViewById<Chip>(R.id.wifi).isChecked,
+                                    "microwave" to findViewById<Chip>(R.id.microwave).isChecked,
+                                    "ceiling_fan" to findViewById<Chip>(R.id.ceiling_fan).isChecked
+                                )
 
 
-                            val servicesDocumentRef =
-                                firestore.collection("RoomServices").document()
-                            servicesDocumentRef.set(services)
-                                .addOnSuccessListener {
-                                    val roomData = hashMapOf(
-                                        "userUid" to userUid,
-                                        "hotelId" to hotelId,
-                                        "roomName" to roomName,
-                                        "maxPeople" to maxPeople,
-                                        "number" to number,
-                                        "price" to price
-                                    )
+                                val servicesDocumentRef =
+                                    firestore.collection("RoomServices").document()
+                                servicesDocumentRef.set(services)
+                                    .addOnSuccessListener {
+                                        val roomData = hashMapOf(
+                                            "userUid" to userUid,
+                                            "hotelId" to hotelId,
+                                            "hotelName" to intent.getStringExtra("hotelName"),
+                                            "roomName" to roomName,
+                                            "maxPeople" to maxPeople,
+                                            "number" to number,
+                                            "price" to price
+                                        )
 
-                                    val roomDocumentRef =
-                                        firestore.collection("Rooms").document()
-                                    roomDocumentRef.set(roomData)
-                                        .addOnSuccessListener {
-                                            val storageRef = FirebaseStorage.getInstance().reference
-                                                .child("HotelsData/$userUid/$hotelId/$number")
+                                        val roomDocumentRef =
+                                            firestore.collection("Rooms").document()
+                                        roomDocumentRef.set(roomData)
+                                            .addOnSuccessListener {
+                                                val storageRef = FirebaseStorage.getInstance().reference
+                                                    .child("HotelsData/$userUid/$hotelId/${roomDocumentRef.id}")
 
-                                            imageUris.forEachIndexed { index, uri ->
-                                                val imageRef = storageRef.child("image_$index.jpg")
-                                                val uploadTask = imageRef.putFile(uri)
+                                                imageUris.forEachIndexed { index, uri ->
+                                                    val imageRef = storageRef.child("image_$index.jpg")
+                                                    val uploadTask = imageRef.putFile(uri)
 
-                                                uploadTask.addOnSuccessListener {
-                                                    if (index == imageUris.lastIndex) {
-                                                        Toast.makeText(this, getString(R.string.data_saved_successfully), Toast.LENGTH_SHORT).show()
-                                                        startActivity(Intent(this, HomeCompanyActivity::class.java))
+                                                    uploadTask.addOnSuccessListener {
+                                                        if (index == imageUris.lastIndex) {
+                                                            Toast.makeText(this, getString(R.string.data_saved_successfully), Toast.LENGTH_SHORT).show()
+                                                            startActivity(Intent(this, HomeCompanyActivity::class.java))
+                                                            changeVisibility()
+                                                            finish()
+                                                        }
+                                                    }.addOnFailureListener {
                                                         changeVisibility()
-                                                        finish()
+                                                        Utils.error(this)
                                                     }
-                                                }.addOnFailureListener {
-                                                    changeVisibility()
-                                                    Utils.error(this)
                                                 }
                                             }
-                                        }
-                                        .addOnFailureListener {
-                                            changeVisibility()
-                                            Utils.error(this)
-                                        }
-                                }
-                                .addOnFailureListener {
-                                    changeVisibility()
-                                    Utils.error(this)
-                                }
+                                            .addOnFailureListener {
+                                                changeVisibility()
+                                                Utils.error(this)
+                                            }
+                                    }
+                                    .addOnFailureListener {
+                                        changeVisibility()
+                                        Utils.error(this)
+                                    }
+                            } else { Toast.makeText(this, getString(R.string.add_photos), Toast.LENGTH_SHORT).show() }
                         } else { roomPrice.error = getString(R.string.provide_price_per_night) }
                     } else { roomNumber.error = getString(R.string.provide_room_number) }
                 } else { maxPeopleNumber.error = getString(R.string.provide_max_people) }
@@ -183,7 +187,7 @@ class AddRoomActivity : AppCompatActivity() {
 
         imagesAdapter.notifyDataSetChanged()
 
-        if (imageUris.size >= 5) {
+        if (imageUris.size >= 3) {
             finishButton.visibility = View.VISIBLE
             chipGroup.visibility = View.VISIBLE
         } else {

@@ -65,7 +65,7 @@ class RoomAdapter(private var rooms: MutableList<Room>) : RecyclerView.Adapter<R
                     val number = documentSnapshot.getString("number")
 
                     val storageRef = FirebaseStorage.getInstance().reference
-                        .child("HotelsData/$userUid/$hotelId/$number")
+                        .child("HotelsData/$userUid/$hotelId/${documentSnapshot.id}")
 
                     storageRef.listAll().addOnSuccessListener { listResult ->
                         listResult.items.forEachIndexed { index, item ->
@@ -91,7 +91,7 @@ class RoomAdapter(private var rooms: MutableList<Room>) : RecyclerView.Adapter<R
 
                     FirebaseController.getRoomServices(hotelId, number!!) { documentSnapshot ->
                         documentSnapshot?.data?.forEach { (key, value) ->
-                            if (key != "hotelId" && key != "number"
+                            if (key != "hotelId" && key != "number" && key != "userUid"
                                 && value is Boolean && value) {
                                 val serviceKey = serviceKeys[key]
                                 if (serviceKey != null) {
@@ -110,8 +110,9 @@ class RoomAdapter(private var rooms: MutableList<Room>) : RecyclerView.Adapter<R
         holder.bookButton.setOnClickListener {
             val intent = Intent(holder.itemView.context, BookActivity::class.java)
             intent.putExtra("hotelId", room.hotelId)
-            intent.putExtra("roomId", room.number)
+            intent.putExtra("hotelName", room.hotelName)
             intent.putExtra("roomName", room.name)
+            intent.putExtra("roomId", room.number)
             intent.putExtra("price", room.price)
             holder.itemView.context.startActivity(intent)
         }

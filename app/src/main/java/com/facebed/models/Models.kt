@@ -18,14 +18,17 @@ data class SimpleRoom(
 data class Room(
     val name: String,
     val hotelId: String,
+    val hotelName: String,
     val number: String,
     val maxPeople: String,
     val price: String,
 )
 
 data class Booking(
+    val bookingId: String = "",
     val userUid: String = "",
     val hotelId: String = "",
+    val hotelName: String = "",
     val roomId: String = "",
     val roomName: String = "",
     val name: String = "",

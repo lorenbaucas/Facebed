@@ -68,17 +68,18 @@ class HotelViewActivity : AppCompatActivity() {
                 hotelRating.text = stars.toString()
                 hotelDescription.text = description
 
-                val imageRef = FirebaseStorage.getInstance().reference
-                    .child("HotelsData/$userUid/${hotelId}/MainPhotos/image_0.jpg")
-
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    Glide.with(this)
-                        .load(uri)
-                        .into(hotelImage)
-                }
-
                 val storageRef = FirebaseStorage.getInstance().reference
                     .child("HotelsData/$userUid/$hotelId/MainPhotos")
+
+                storageRef.listAll().addOnSuccessListener { listResult ->
+                    if (listResult.items.isNotEmpty()) {
+                        listResult.items[0].downloadUrl.addOnSuccessListener { uri ->
+                            Glide.with(this)
+                                .load(uri)
+                                .into(hotelImage)
+                        }
+                    }
+                }
 
                 storageRef.listAll().addOnSuccessListener { listResult ->
                     listResult.items.forEachIndexed { index, item ->
@@ -123,7 +124,7 @@ class HotelViewActivity : AppCompatActivity() {
                         val maxPeople = documentSnapshot.getString("maxPeople")
                         val price = documentSnapshot.getString("price")
 
-                        val room = Room(roomName!!, hotelId, number!!, maxPeople!!, price!!)
+                        val room = Room(roomName!!, hotelId, name!!, number!!, maxPeople!!, price!!)
                         roomsList.add(room)
                         roomsList.sortWith(compareBy { it.price })
                     }

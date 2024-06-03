@@ -63,13 +63,17 @@ class EventsCompanyFragment : Fragment() {
                     val hotelId = document.id
 
                     val imageRef = FirebaseStorage.getInstance().reference
-                        .child("HotelsData/$userUid/$hotelId/MainPhotos/image_0.jpg")
+                        .child("HotelsData/$userUid/$hotelId/MainPhotos")
 
-                    imageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val hotel = Hotel(hotelName, hotelId, location, uri)
-                        hotelList.add(hotel)
-                        hotelsAdapter.notifyDataSetChanged()
-                    }.addOnFailureListener {}
+                    imageRef.listAll().addOnSuccessListener { listResult ->
+                        if (listResult.items.isNotEmpty()) {
+                            listResult.items[0].downloadUrl.addOnSuccessListener { uri ->
+                                val hotel = Hotel(hotelName, hotelId, location, uri)
+                                hotelList.add(hotel)
+                                hotelsAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
                 }
             }
         }

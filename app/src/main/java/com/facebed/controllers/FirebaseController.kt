@@ -1,7 +1,9 @@
 package com.facebed.controllers
 
 import android.net.Uri
+import com.facebed.models.Booking
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
@@ -104,5 +106,28 @@ class FirebaseController {
                     }
                 }
         }
+
+        fun deleteFirebaseData(collectionRef: CollectionReference, userUid: String) {
+            collectionRef.whereEqualTo("userUid", userUid)
+                .get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        collectionRef.document(document.id).delete()
+                    }
+                }
+        }
+        fun cancelBooking(booking: Booking, onComplete: (Boolean) -> Unit) {
+            // Remove the booking from Firebase
+            FirebaseFirestore.getInstance().collection("Bookings")
+                .document(booking.bookingId)
+                .delete()
+                .addOnSuccessListener {
+                    onComplete(true)
+                }
+                .addOnFailureListener {
+                    onComplete(false)
+                }
+        }
+
     }
 }

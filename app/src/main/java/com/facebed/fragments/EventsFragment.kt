@@ -14,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EventsFragment : Fragment() {
-
     private lateinit var bookingAdapter: BookingAdapter
     private lateinit var bookings: MutableList<Booking>
     private lateinit var recyclerView: RecyclerView

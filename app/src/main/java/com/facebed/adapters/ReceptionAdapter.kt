@@ -14,20 +14,20 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class BookingAdapter(private var bookings: MutableList<Booking>) : RecyclerView.Adapter<BookingAdapter.BookingViewHolder>() {
+class ReceptionAdapter(private var bookings: MutableList<Booking>) : RecyclerView.Adapter<ReceptionAdapter.ReceptionViewHolder>() {
 
-    class BookingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ReceptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val hotelRoom: TextView = itemView.findViewById(R.id.primary_text)
         val date: TextView = itemView.findViewById(R.id.secondary_text)
         val cancelIcon: ImageButton = itemView.findViewById(R.id.cancel_icon)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookingViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_booking, parent, false)
-        return BookingViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceptionViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_reception, parent, false)
+        return ReceptionViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ReceptionViewHolder, position: Int) {
         val booking = bookings[position]
         holder.hotelRoom.text = booking.hotelName + " - " + booking.roomName
 

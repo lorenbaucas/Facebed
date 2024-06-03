@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.facebed.R
 import com.facebed.activities.SignInActivity
+import com.facebed.controllers.FirebaseController
 import com.facebed.controllers.Utils
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -180,8 +181,11 @@ class ProfileCompanyFragment : Fragment() {
                                     .child(user.uid).delete()
                                 FirebaseFirestore.getInstance().collection("User")
                                     .document(user.uid).delete()
-                                FirebaseFirestore.getInstance().collection("Hotels")
-                                    .document(user.uid).delete()
+                                val firestore = FirebaseFirestore.getInstance()
+                                FirebaseController.deleteFirebaseData(firestore.collection("Hotels"), user.uid)
+                                FirebaseController.deleteFirebaseData(firestore.collection("Rooms"), user.uid)
+                                FirebaseController.deleteFirebaseData(firestore.collection("HotelServices"), user.uid)
+                                FirebaseController.deleteFirebaseData(firestore.collection("RoomServices"), user.uid)
                             } finally {
                                 user.delete().addOnCompleteListener { deleteTask ->
                                     if (deleteTask.isSuccessful) {

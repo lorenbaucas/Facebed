@@ -146,7 +146,7 @@ class AddHotelActivity : AppCompatActivity() {
                 "userUid" to userUid
             )
 
-            if (imageUris.size >= 5) {
+            if (imageUris.size > 4) {
                 progressBar.visibility = View.VISIBLE
                 finishButton.visibility = View.GONE
                 val hotelName = initialHotelData["hotelName"] as String
@@ -187,7 +187,8 @@ class AddHotelActivity : AppCompatActivity() {
                                                 getString(R.string.data_saved_successfully),
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                            startActivity(Intent(this, HomeCompanyActivity::class.java))
+                                            startActivity(Intent(this, HomeCompanyActivity::class.java)
+                                                .putExtra("hotelName", hotelName))
                                             finish()
                                         }.addOnFailureListener {
                                             progressBar.visibility = View.GONE
@@ -244,51 +245,54 @@ class AddHotelActivity : AppCompatActivity() {
             if (hotelName.isNotEmpty()) {
                 if (location.isNotEmpty()) {
                     if (starCount > 0) {
-                        progressBar.visibility = View.VISIBLE
-                        nextButton.visibility = View.GONE
+                        if (imageUris.size > 4) {
+                            progressBar.visibility = View.VISIBLE
+                            nextButton.visibility = View.GONE
 
-                        val hotelData = hashMapOf(
-                            "userUid" to userUid,
-                            "hotelName" to hotelName,
-                            "location" to location,
-                            "stars" to starCount,
-                            "description" to description
-                        )
+                            val hotelData = hashMapOf(
+                                "userUid" to userUid,
+                                "hotelName" to hotelName,
+                                "location" to location,
+                                "stars" to starCount,
+                                "description" to description
+                            )
 
-                        val hotelDocumentRef =
-                            firestore.collection("Hotels").document()
+                            val hotelDocumentRef =
+                                firestore.collection("Hotels").document()
 
-                        hotelDocumentRef.set(hotelData)
-                            .addOnSuccessListener {
-                                val hotelId = hotelDocumentRef.id
-                                val storageRef = FirebaseStorage.getInstance().reference
-                                    .child("HotelsData/$userUid/$hotelId/MainPhotos")
+                            hotelDocumentRef.set(hotelData)
+                                .addOnSuccessListener {
+                                    val hotelId = hotelDocumentRef.id
+                                    val storageRef = FirebaseStorage.getInstance().reference
+                                        .child("HotelsData/$userUid/$hotelId/MainPhotos")
 
-                                FirebaseController.uploadImages(storageRef, imageUris) {
-                                    val services = getServices(userUid!!, hotelId)
+                                    FirebaseController.uploadImages(storageRef, imageUris) {
+                                        val services = getServices(userUid!!, hotelId)
 
-                                    val servicesDocumentRef =
-                                        firestore.collection("HotelServices").document()
-                                    servicesDocumentRef.set(services)
-                                        .addOnSuccessListener {
-                                            Toast.makeText(this, getString(R.string.data_saved_successfully),
-                                                Toast.LENGTH_SHORT).show()
-                                            startActivity(
-                                                Intent(this, AddRoomActivity::class.java)
-                                                    .putExtra("hotelId", hotelId)
-                                            )
-                                            progressBar.visibility = View.GONE
-                                            nextButton.visibility = View.VISIBLE
+                                        val servicesDocumentRef =
+                                            firestore.collection("HotelServices").document()
+                                        servicesDocumentRef.set(services)
+                                            .addOnSuccessListener {
+                                                Toast.makeText(this, getString(R.string.data_saved_successfully),
+                                                    Toast.LENGTH_SHORT).show()
+                                                startActivity(
+                                                    Intent(this, AddRoomActivity::class.java)
+                                                        .putExtra("hotelId", hotelId)
+                                                )
+                                                progressBar.visibility = View.GONE
+                                                nextButton.visibility = View.VISIBLE
 
-                                            finish()
-                                        }
-                                        .addOnFailureListener {
-                                            progressBar.visibility = View.GONE
-                                            nextButton.visibility = View.VISIBLE
-                                            Utils.error(this)
-                                        }
+                                                finish()
+                                            }
+                                            .addOnFailureListener {
+                                                progressBar.visibility = View.GONE
+                                                nextButton.visibility = View.VISIBLE
+                                                Utils.error(this)
+                                            }
+                                    }
                                 }
-                            }
+                        } else { Toast.makeText(this, getString(R.string.add_photos),
+                            Toast.LENGTH_SHORT).show() }
                     } else { Toast.makeText(this, getString(R.string.select_stars),
                         Toast.LENGTH_SHORT).show() }
                 } else { locationText.error = getString(R.string.provide_location) }
