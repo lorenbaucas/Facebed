@@ -101,7 +101,6 @@
                 android:drawableStart="@drawable/baseline_email_24"
                 android:drawablePadding="8dp"
                 android:maxLength="50"
-                android:ems="10"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:minHeight="48dp"
@@ -119,7 +118,6 @@
                 android:drawableStart="@drawable/baseline_lock_24"
                 android:drawableEnd="@drawable/baseline_remove_red_eye_24"
                 android:drawablePadding="8dp"
-                android:ems="10"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:minHeight="48dp"
@@ -163,7 +161,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:visibility="gone"
-        android:indeterminateTint="#F66C2C"
+        android:indeterminateTint="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/separator" />
@@ -225,7 +223,7 @@
             android:layout_height="50dp"
             android:gravity="center"
             android:text="@string/here"
-            android:textColor="#0091F1" />
+            android:textColor="@color/blue" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.facebed.R
 import com.facebed.adapters.ImagesAdapter
+import com.facebed.adapters.ReviewsAdapter
 import com.facebed.adapters.RoomAdapter
 import com.facebed.adapters.ServicesAdapter
 import com.facebed.controllers.FirebaseController
 import com.facebed.controllers.Utils
+import com.facebed.models.Booking
 import com.facebed.models.Room
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -30,6 +32,11 @@ class HotelViewActivity : AppCompatActivity() {
     private lateinit var rvHotelServices: RecyclerView
     private lateinit var rvHotelImages: RecyclerView
     private lateinit var rvRooms: RecyclerView
+
+    private lateinit var reviewsAdapter: ReviewsAdapter
+    private lateinit var rvReviews: RecyclerView
+    private lateinit var averageTextView: TextView
+    private var bookingsWithReviews: MutableList<Booking> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +56,26 @@ class HotelViewActivity : AppCompatActivity() {
         rvHotelServices.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvRooms.layoutManager = LinearLayoutManager(this)
 
+        rvReviews = findViewById(R.id.rv_reviews_company)
+        rvReviews.layoutManager = LinearLayoutManager(this)
+        reviewsAdapter = ReviewsAdapter(bookingsWithReviews, showButtons = false)
+        rvReviews.adapter = reviewsAdapter
+
         val imageUris: MutableList<Uri> = mutableListOf()
         val servicesList: MutableList<String> = mutableListOf()
         val roomsList: MutableList<Room> = mutableListOf()
 
         val hotelId = intent.getStringExtra("hotelId")
+
+        averageTextView = findViewById(R.id.stars_text)
+
+        if (hotelId != null) {
+            loadBookingsWithReviews(hotelId) {
+                FirebaseController.calculateReviewsAverage(hotelId) { formattedAverage ->
+                    averageTextView.text = formattedAverage
+                }
+            }
+        }
 
         FirebaseFirestore.getInstance().collection("Hotels").document(hotelId!!)
             .get().addOnSuccessListener { documentSnapshot ->
@@ -131,6 +153,38 @@ class HotelViewActivity : AppCompatActivity() {
 
                     val roomsAdapter = RoomAdapter(roomsList)
                     rvRooms.adapter = roomsAdapter
+                }
+            }
+    }
+
+    private fun loadBookingsWithReviews(hotelId: String, onComplete: () -> Unit) {
+        val firestore = FirebaseFirestore.getInstance()
+
+        firestore.collection("Bookings")
+            .whereEqualTo("hotelId", hotelId)
+            .get()
+            .addOnSuccessListener { documents ->
+                bookingsWithReviews.clear()
+                val allBookings = documents.map { document ->
+                    document.toObject(Booking::class.java)
+                }
+                var loadedCount = 0
+
+                allBookings.forEach { booking ->
+                    firestore.collection("Reviews")
+                        .document(booking.bookingId)
+                        .get()
+                        .addOnSuccessListener { reviewDocument ->
+                            if (reviewDocument.exists()) {
+                                bookingsWithReviews.add(booking)
+                                reviewsAdapter.notifyDataSetChanged()
+                            }
+                            loadedCount++
+
+                            if (loadedCount == allBookings.size) {
+                                onComplete()
+                            }
+                        }
                 }
             }
     }

@@ -62,7 +62,6 @@ class ProfileFragment : Fragment() {
 
     private lateinit var progressBarSettings: ProgressBar
 
-    private lateinit var ratingsButton: Button
     private lateinit var logoutButton: Button
     private lateinit var deleteButton: Button
 
@@ -92,7 +91,6 @@ class ProfileFragment : Fragment() {
 
         settingsButton = view.findViewById(R.id.settings_button)
         checkButton = view.findViewById(R.id.check_button)
-        ratingsButton = view.findViewById(R.id.ratings_button)
         logoutButton = view.findViewById(R.id.logout_button)
         deleteButton = view.findViewById(R.id.delete_button)
 

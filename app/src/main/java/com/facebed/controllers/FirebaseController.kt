@@ -7,6 +7,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
+import java.util.Calendar
 
 class FirebaseController {
     companion object {
@@ -116,18 +117,68 @@ class FirebaseController {
                     }
                 }
         }
-        fun cancelBooking(booking: Booking, onComplete: (Boolean) -> Unit) {
-            // Remove the booking from Firebase
+        fun cancelBooking(booking: Booking, reason: String) {
+            // Update the booking in Firebase to set pending to false and add a reason for cancellation
+            val updates = hashMapOf<String, Any>(
+                "reason" to reason,
+                "pending" to false
+            )
+
             FirebaseFirestore.getInstance().collection("Bookings")
                 .document(booking.bookingId)
-                .delete()
-                .addOnSuccessListener {
-                    onComplete(true)
+                .update(updates)
+        }
+
+        fun filterBookings(bookings: List<Booking>): List<Booking> {
+            val today = Calendar.getInstance().timeInMillis
+            return bookings.filter { booking ->
+                val endDate = booking.datesList.last().timeInMillis
+                endDate < today || booking.reason != null
+            }
+        }
+
+        fun filterAndExcludeCancelledBookings(bookings: List<Booking>, onComplete: (List<Booking>) -> Unit) {
+            FirebaseFirestore.getInstance().collection("Bookings")
+                .whereIn("bookingId", bookings.map { it.bookingId })
+                .get()
+                .addOnSuccessListener { documents ->
+                    val validBookings = documents.map { document ->
+                        document.toObject(Booking::class.java)
+                    }.filter { booking ->
+                        booking.datesList.last().timeInMillis >= Calendar.getInstance().timeInMillis && booking.reason == null
+                    }
+                    onComplete(validBookings)
                 }
                 .addOnFailureListener {
-                    onComplete(false)
+                    onComplete(emptyList())
                 }
         }
 
+        fun calculateReviewsAverage(hotelId: String, callback: (String) -> Unit) {
+            FirebaseFirestore.getInstance().collection("Reviews")
+                .whereEqualTo("hotelId", hotelId)
+                .get()
+                .addOnSuccessListener { documents ->
+                    var totalStars = 0
+                    var numberOfReviews = 0
+
+                    for (document in documents) {
+                        val stars = document.getLong("stars")
+                        if (stars != null) {
+                            totalStars += stars.toInt()
+                            numberOfReviews++
+                        }
+                    }
+
+                    val average = if (numberOfReviews > 0) {
+                        totalStars.toDouble() / numberOfReviews.toDouble()
+                    } else {
+                        0.0
+                    }
+
+                    val formattedAverage = "%.2f".format(average.coerceIn(0.0, 5.0))
+                    callback(formattedAverage)
+                }
+        }
     }
 }

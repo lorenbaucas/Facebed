@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.facebed.R
@@ -17,21 +18,26 @@ import com.google.firebase.storage.FirebaseStorage
 class HomeFragment : Fragment() {
     private lateinit var hotelsAdapter: HotelAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var searchView: SearchView
 
     private val hotels: MutableList<Hotel> = mutableListOf()
+    private val displayedHotels: MutableList<Hotel> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? { return inflater.inflate(R.layout.home_fragment, container, false) }
+    ): View? {
+        return inflater.inflate(R.layout.home_fragment, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView = view.findViewById(R.id.rv_hotels_company)
+        searchView = view.findViewById(R.id.search_view)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        hotelsAdapter = HotelAdapter(hotels)
+        hotelsAdapter = HotelAdapter(displayedHotels)
         recyclerView.adapter = hotelsAdapter
 
         val hotelsCollectionRef = FirebaseFirestore.getInstance().collection("Hotels")
@@ -49,11 +55,35 @@ class HomeFragment : Fragment() {
                     imageRef.downloadUrl.addOnSuccessListener { uri ->
                         val hotel = Hotel(hotelName, hotelId, location!!, uri)
                         hotels.add(hotel)
-                        hotels.sortWith(compareBy { it.name })
+                        displayedHotels.add(hotel)
+                        displayedHotels.sortWith(compareBy { it.name })
                         hotelsAdapter.notifyDataSetChanged()
                     }
                 }
             }
         }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filterHotels(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterHotels(newText)
+                return false
+            }
+        })
+    }
+
+    private fun filterHotels(query: String?) {
+        val filteredList = if (query.isNullOrEmpty()) {
+            hotels
+        } else {
+            hotels.filter { it.name.contains(query, ignoreCase = true) }
+        }
+        displayedHotels.clear()
+        displayedHotels.addAll(filteredList)
+        hotelsAdapter.notifyDataSetChanged()
     }
 }

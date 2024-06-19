@@ -12,7 +12,7 @@
         android:layout_height="100dp"
         android:layout_marginTop="150dp"
         android:elevation="5dp"
-        android:indeterminateTint="#F66C2C"
+        android:indeterminateTint="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,7 +20,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview_profile"
         android:layout_width="300dp"
-        android:layout_height="190dp"
+        android:layout_height="130dp"
         android:layout_marginTop="200dp"
         app:cardCornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,21 +30,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/ratings_button"
-                android:layout_width="190dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:backgroundTint="#10000000"
-                android:drawableLeft="@drawable/baseline_star_24"
-                android:drawableTint="?attr/colorOnSurface"
-                android:text="@string/my_ratings"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
 
             <ImageButton
                 android:id="@+id/settings_button"
@@ -180,7 +165,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="15dp"
                 android:visibility="gone"
-                android:indeterminateTint="#F66C2C"
+                android:indeterminateTint="@color/orange"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

@@ -92,8 +92,22 @@
     <string name="rural">Rural</string>
     <string name="book">Book</string>
     <string name="booking">Booking</string>
-    <string name="select_date">Please, select a date</string>
+    <string name="please_fill_in_the_details">Please, fill in the details</string>
     <string name="booking_successful">Booking successful</string>
-    <string name="make_reservation">Make reservation in the name of:</string>
+    <string name="fill_in_the_details">Fill in the details:</string>
     <string name="booking_text">By confirming you agree to pay the amount and you have the right to cancel your booking at any time at no additional cost.</string>
+    <string name="search_hotel">Search hotel</string>
+    <string name="id_card">ID card</string>
+    <string name="id_not_valid">ID not valid</string>
+    <string name="my_bookings">My bookings</string>
+    <string name="bookings_history">Bookings history</string>
+    <string name="my_reviews">My reviews</string>
+    <string name="review_text">Describe your experience (optional)</string>
+    <string name="delete">Delete</string>
+    <string name="upcoming_customers">Upcoming customers</string>
+    <string name="why_cancel">Why do you cancel?</string>
+    <string name="write_reason">Write the reason here</string>
+    <string name="reason_required">Reason required</string>
+    <string name="search_booking">Customer ID/name or booking ID</string>
+    <string name="reviews">Reviews</string>
 </resources>

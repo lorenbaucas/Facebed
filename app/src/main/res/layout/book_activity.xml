@@ -16,13 +16,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:pagesColor="@android:color/transparent"
-        app:selectionColor="#F66C2C"
+        app:selectionColor="@color/orange"
         app:selectionLabelColor="?attr/colorOnSurface"
         app:type="range_picker" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="300dp"
         android:layout_marginTop="30dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:textSize="20sp"
-                android:text="@string/make_reservation"
+                android:text="@string/fill_in_the_details"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,31 +51,63 @@
                 android:id="@+id/name_text"
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:background="@android:color/transparent"
+                android:drawableStart="@drawable/baseline_drive_file_rename_outline_24"
                 android:drawablePadding="8dp"
                 android:maxLength="50"
-                android:gravity="center"
                 android:hint="@string/name"
-                android:inputType="textEmailAddress"
+                android:inputType="textAutoComplete"
                 android:minHeight="48dp"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/reservation_text" />
+
+            <AutoCompleteTextView
+                android:id="@+id/phone_text"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/baseline_local_phone_24"
+                android:drawablePadding="8dp"
+                android:maxLength="20"
+                android:hint="@string/phone_number"
+                android:inputType="phone"
+                android:minHeight="48dp"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/name_text" />
+
+            <AutoCompleteTextView
+                android:id="@+id/id_text"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/baseline_credit_card_24"
+                android:drawablePadding="8dp"
+                android:maxLength="50"
+                android:hint="@string/id_card"
+                android:inputType="textNoSuggestions"
+                android:minHeight="48dp"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/phone_text" />
 
             <Button
                 android:id="@+id/accept_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:backgroundTint="#10000000"
                 android:text="@string/ok"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/name_text" />
+                app:layout_constraintTop_toBottomOf="@+id/id_text" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

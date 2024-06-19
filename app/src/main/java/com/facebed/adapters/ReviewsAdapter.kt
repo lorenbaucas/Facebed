@@ -14,69 +14,60 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.facebed.R
-import com.facebed.controllers.FirebaseController
 import com.facebed.controllers.Utils
 import com.facebed.models.Booking
 import com.facebed.models.Review
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
-class BookingAdapter(private var bookings: MutableList<Booking>, private val showReviewButton: Boolean) : RecyclerView.Adapter<BookingAdapter.BookingViewHolder>() {
+class ReviewsAdapter(private var bookings: MutableList<Booking>, private val showButtons: Boolean) : RecyclerView.Adapter<ReviewsAdapter.ReviewsViewHolder>() {
 
-    class BookingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val hotelRoom: TextView = itemView.findViewById(R.id.primary_text)
-        val date: TextView = itemView.findViewById(R.id.secondary_text)
-        val cancelIcon: ImageButton = itemView.findViewById(R.id.cancel_icon)
-        val reviewButton: ImageButton = itemView.findViewById(R.id.review_button)
+    class ReviewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val username: TextView = itemView.findViewById(R.id.username_text)
+        val starRating: TextView = itemView.findViewById(R.id.stars_number_text)
+        val date: TextView = itemView.findViewById(R.id.date_text)
+        val reviewText: TextView = itemView.findViewById(R.id.review_text)
+        val editIcon: ImageButton = itemView.findViewById(R.id.edit_icon)
+        val deleteIcon: ImageButton = itemView.findViewById(R.id.delete_icon)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookingViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_booking, parent, false)
-        return BookingViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewsViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_review, parent, false)
+        return ReviewsViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ReviewsViewHolder, position: Int) {
         val booking = bookings[position]
-        holder.hotelRoom.text = booking.hotelName + " - " + booking.roomName
-
         val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
-        val startDate = Date(booking.datesList.first().timeInMillis)
-        val endDate = Date(booking.datesList.last().timeInMillis)
 
-        val startDateText = dateFormat.format(startDate)
-        val endDateText = dateFormat.format(endDate)
+        val reviewsRef = FirebaseFirestore.getInstance().collection("Reviews").document(booking.bookingId)
+        reviewsRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val review = documentSnapshot.toObject(Review::class.java)
+                holder.username.text = review?.username
+                holder.starRating.text = review?.stars.toString()
+                holder.date.text = dateFormat.format(review?.currentDayInMillis)
+                holder.reviewText.text = review?.reviewText
 
-        val formattedDateText = if (booking.datesList.size > 1) {
-            "$startDateText - $endDateText"
-        } else {
-            startDateText
-        }
+                if (showButtons) {
+                    holder.deleteIcon.visibility = View.VISIBLE
+                    holder.editIcon.visibility = View.VISIBLE
 
-        holder.date.text = formattedDateText
+                    holder.editIcon.setOnClickListener {
+                        openReviewDialog(holder.itemView.context, booking)
+                    }
 
-        if (showReviewButton) {
-            if (booking.reason == null || booking.reason == "") {
-                holder.cancelIcon.visibility = View.GONE
-                holder.reviewButton.visibility = View.VISIBLE
-                holder.reviewButton.setOnClickListener {
-                    openReviewDialog(holder.itemView.context, booking)
-                }
-            } else {
-                holder.cancelIcon.visibility = View.GONE
-                holder.reviewButton.visibility = View.GONE
-            }
-        } else {
-            holder.cancelIcon.visibility = View.VISIBLE
-            holder.reviewButton.visibility = View.GONE
-            holder.cancelIcon.setOnClickListener {
-                val userUid = FirebaseAuth.getInstance().currentUser?.uid
-                if (userUid == booking.userUid) {
-                    FirebaseController.cancelBooking(booking, "Cancelled by user")
-                    bookings.removeAt(position)
-                    notifyItemRemoved(position)
+                    holder.deleteIcon.setOnClickListener {
+                        reviewsRef.delete().addOnSuccessListener {
+                            bookings.removeAt(position)
+                            notifyItemRemoved(position)
+                            notifyItemRangeChanged(position, bookings.size)
+                        }
+                    }
+                } else {
+                    holder.deleteIcon.visibility = View.GONE
+                    holder.editIcon.visibility = View.GONE
                 }
             }
         }
@@ -135,12 +126,8 @@ class BookingAdapter(private var bookings: MutableList<Booking>, private val sho
             }
         }
 
-        deleteButton.setOnClickListener {
-            reviewsRef.get().addOnSuccessListener { documentSnapshot ->
-                documentSnapshot.reference.delete()
-                alertDialog.dismiss()
-            }
-        }
+        deleteButton.text = context.getString(R.string.cancel)
+        deleteButton.setOnClickListener { alertDialog.dismiss() }
 
         acceptButton.setOnClickListener {
             val reviewContent = reviewText.text?.trim().toString()
@@ -163,8 +150,9 @@ class BookingAdapter(private var bookings: MutableList<Booking>, private val sho
                     deleteButton.visibility = View.VISIBLE
                     acceptButton.visibility = View.VISIBLE
                     progressBar.visibility = View.GONE
-                    Toast.makeText(context, "Review saved successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Review updated successfully", Toast.LENGTH_SHORT).show()
                     alertDialog.dismiss()
+                    notifyDataSetChanged()
                 }.addOnFailureListener {
                     deleteButton.visibility = View.VISIBLE
                     acceptButton.visibility = View.VISIBLE

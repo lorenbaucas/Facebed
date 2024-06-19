@@ -175,7 +175,6 @@
                 android:background="@android:color/transparent"
                 android:drawableStart="@drawable/baseline_edit_24"
                 android:drawablePadding="8dp"
-                android:ems="10"
                 android:hint="@string/hotel_description"
                 android:inputType="textMultiLine|textAutoComplete"
                 android:maxLength="2000"
@@ -195,7 +194,6 @@
                 android:background="@android:color/transparent"
                 android:drawableStart="@drawable/baseline_place_24"
                 android:drawablePadding="8dp"
-                android:ems="10"
                 android:hint="@string/location"
                 android:inputType="textAutoComplete"
                 android:maxLength="100"
@@ -306,11 +304,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:indeterminateTint="#0091F1"
+                android:indeterminateTint="@color/blue"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/chip_group" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

@@ -91,9 +91,23 @@
     <string name="provide_price_per_night">Proporciona un precio por noche</string>
     <string name="updated_data">Datos actualizados</string>
     <string name="book">Reservar</string>
-    <string name="select_date">Por favor, seleccione una fecha</string>
+    <string name="please_fill_in_the_details">Por favor, rellene los datos</string>
     <string name="booking_successful">Reserva confirmada</string>
-    <string name="make_reservation">Hacer reserva a nombre de:</string>
+    <string name="fill_in_the_details">Rellene los datos:</string>
     <string name="booking">Reserva</string>
     <string name="booking_text">Al confirmar aceptas pagar el importe y estás en tu derecho de cancelar tu reserva en cualquier momento sin coste adicional.</string>
+    <string name="search_hotel">Buscar hotel</string>
+    <string name="id_card">DNI</string>
+    <string name="id_not_valid">DNI no válido</string>
+    <string name="my_bookings">Mis reservas</string>
+    <string name="bookings_history">Historial de reservas</string>
+    <string name="my_reviews">Mis reseñas</string>
+    <string name="review_text">Describe tu experiencia (opcional)</string>
+    <string name="delete">Eliminar</string>
+    <string name="upcoming_customers">Próximos clientes</string>
+    <string name="why_cancel">¿Por qué cancelas?</string>
+    <string name="write_reason">Escribe la razón aquí</string>
+    <string name="reason_required">Se necesita una razón</string>
+    <string name="search_booking">Nombre/DNI cliente o ID reserva</string>
+    <string name="reviews">Reseñas</string>
 </resources>

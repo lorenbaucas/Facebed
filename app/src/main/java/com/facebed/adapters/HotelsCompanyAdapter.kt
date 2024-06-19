@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.facebed.R
 import com.facebed.activities.AddHotelActivity
 import com.facebed.activities.HotelRoomsActivity
+import com.facebed.activities.ReviewsActivity
 import com.facebed.models.Hotel
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -21,6 +22,7 @@ class HotelsCompanyAdapter(private var hotels: MutableList<Hotel>) : RecyclerVie
         val location: TextView = itemView.findViewById(R.id.secondary_text)
         val imageView: CircleImageView = itemView.findViewById(R.id.image)
         val editIcon: ImageButton = itemView.findViewById(R.id.edit_icon)
+        val reviewIcon: ImageButton = itemView.findViewById(R.id.review_icon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HotelViewHolder {
@@ -32,6 +34,7 @@ class HotelsCompanyAdapter(private var hotels: MutableList<Hotel>) : RecyclerVie
         val hotel = hotels[position]
         holder.hotelName.text = hotel.name
         holder.location.text = hotel.location
+        holder.reviewIcon.visibility = View.VISIBLE
         Glide.with(holder.itemView.context)
             .load(hotel.imageUri)
             .into(holder.imageView)
@@ -45,6 +48,12 @@ class HotelsCompanyAdapter(private var hotels: MutableList<Hotel>) : RecyclerVie
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, HotelRoomsActivity::class.java)
                 .putExtra("hotelName", hotel.name)
+                .putExtra("hotelId", hotel.hotelId)
+            holder.itemView.context.startActivity(intent)
+        }
+
+        holder.reviewIcon.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ReviewsActivity::class.java)
                 .putExtra("hotelId", hotel.hotelId)
             holder.itemView.context.startActivity(intent)
         }

@@ -10,9 +10,9 @@ import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.MotionEvent
 import android.widget.AutoCompleteTextView
+import android.widget.ImageView
 import android.widget.Toast
 import com.facebed.R
-import com.google.android.material.chip.Chip
 
 class Utils {
     companion object {
@@ -96,6 +96,19 @@ class Utils {
 
         fun error(context: Context) {
             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+        }
+
+        fun isIdValid(id: String): Boolean {
+            val idPattern = "^[0-9]{8}[A-Z]$".toRegex()
+            if (!idPattern.matches(id)) return false
+
+            val idNumber = id.substring(0, 8).toInt()
+            val idLetter = id[8]
+
+            val letters = "TRWAGMYFPDXBNJZSQVHLCKE"
+            val expectedLetter = letters[idNumber % 23]
+
+            return idLetter == expectedLetter
         }
     }
 }
