@@ -47,6 +47,7 @@ class EventsCompanyFragment : Fragment() {
         loadHotelData()
     }
 
+    //Simplemente cargamos la lista de hoteles y sus datos
     private fun loadHotelData() {
         val userUid = FirebaseAuth.getInstance().currentUser?.uid
 

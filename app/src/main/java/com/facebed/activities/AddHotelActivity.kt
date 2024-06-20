@@ -77,11 +77,13 @@ class AddHotelActivity : AppCompatActivity() {
         val firestore = FirebaseFirestore.getInstance()
         val userUid = FirebaseAuth.getInstance().currentUser?.uid
 
+        //Añadimos las imagenes del hotel
         imagesAdapter = AddImagesAdapter(imageUris)
         recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = imagesAdapter
 
+        //Si el hotel existia se nos permitira editarlo
         val hotelNameExists = intent.getStringExtra("hotelName")
         if (!hotelNameExists.isNullOrEmpty()) {
             val hotelsCollectionRef = firestore.collection("Hotels")
@@ -99,6 +101,7 @@ class AddHotelActivity : AppCompatActivity() {
                         val description = documentSnapshot.getString("description")
                         val stars = documentSnapshot.getLong("stars")
 
+                        //Rellenamos los datos del hotel
                         hotelNameText.setText(hotelName)
                         locationText.setText(location)
                         descriptionText.setText(description)
@@ -124,6 +127,7 @@ class AddHotelActivity : AppCompatActivity() {
                             chipGroup.visibility = View.VISIBLE
                             val servicesData = hashMapOf<String, Any?>()
 
+                            //Se ponen preseleccionados los servicios que ya tenia
                             documentSnapshot?.data?.forEach { (key, value) ->
                                 if (key != "userUid" || key != "hotelName") {
                                     val chip = chipGroup.findViewWithTag<Chip>(key)
@@ -137,6 +141,7 @@ class AddHotelActivity : AppCompatActivity() {
                 }
         }
 
+        //Guardamos los datos modificados
         finishButton.setOnClickListener {
             val updatedHotelData = hashMapOf<String, Any?>(
                 "hotelName" to hotelNameText.text.toString().trim(),
@@ -204,6 +209,7 @@ class AddHotelActivity : AppCompatActivity() {
             }
         }
 
+        //Permisos para acceder a las imagenes
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -217,6 +223,7 @@ class AddHotelActivity : AppCompatActivity() {
             }
         }
 
+        //Seleccionamos imagenes
         addPhotosButton.setOnClickListener {
             val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 Manifest.permission.READ_MEDIA_IMAGES
@@ -237,6 +244,7 @@ class AddHotelActivity : AppCompatActivity() {
             if (result.resultCode == RESULT_OK) { handleImagePickerResult(result) }
         }
 
+        //Creamos el nuevo hotel
         nextButton.setOnClickListener {
             val hotelName = hotelNameText.text.toString().trim()
             val location = locationText.text.toString().trim()
@@ -312,6 +320,7 @@ class AddHotelActivity : AppCompatActivity() {
         }
     }
 
+    //Sirve para cambiar el numero de estrellas del hotel
     private fun changeStars(count: Int) {
         for (star in stars) {
             star.setImageResource(R.drawable.baseline_star_border_24)

@@ -23,6 +23,7 @@ class ServicesAdapter(private val servicesData: MutableList<String>, val clickLi
     }
 
     override fun onBindViewHolder(holder: ServiceViewHolder, position: Int) {
+        //Para obtener la lista de servicios tanto de los hoteles como de las habitaciones
         val service = servicesData[position]
         holder.serviceName.text = service
     }

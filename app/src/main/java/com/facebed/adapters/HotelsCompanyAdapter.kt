@@ -31,6 +31,7 @@ class HotelsCompanyAdapter(private var hotels: MutableList<Hotel>) : RecyclerVie
     }
 
     override fun onBindViewHolder(holder: HotelViewHolder, position: Int) {
+        //Lista de hoteles en la empresa
         val hotel = hotels[position]
         holder.hotelName.text = hotel.name
         holder.location.text = hotel.location
@@ -39,12 +40,14 @@ class HotelsCompanyAdapter(private var hotels: MutableList<Hotel>) : RecyclerVie
             .load(hotel.imageUri)
             .into(holder.imageView)
 
+        //Para editar el hotel
         holder.editIcon.setOnClickListener {
             val intent = Intent(holder.itemView.context, AddHotelActivity::class.java)
             intent.putExtra("hotelName", hotel.name)
             holder.itemView.context.startActivity(intent)
         }
 
+        //Para que nos muestre las habitaciones asociadas
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, HotelRoomsActivity::class.java)
                 .putExtra("hotelName", hotel.name)
@@ -52,6 +55,7 @@ class HotelsCompanyAdapter(private var hotels: MutableList<Hotel>) : RecyclerVie
             holder.itemView.context.startActivity(intent)
         }
 
+        //Para ver las reseñas de ese hotel
         holder.reviewIcon.setOnClickListener {
             val intent = Intent(holder.itemView.context, ReviewsActivity::class.java)
                 .putExtra("hotelId", hotel.hotelId)

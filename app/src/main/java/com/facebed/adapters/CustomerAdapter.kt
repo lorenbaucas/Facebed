@@ -38,6 +38,7 @@ class CustomerAdapter(private var bookings: MutableList<Booking>) : RecyclerView
         return CustomerViewHolder(view)
     }
 
+    //Dialogo para escribir el motivo de la cancelacion de la reserva por parte de la empresa
     private fun showCancelDialog(context: Context, booking: Booking, position: Int) {
         val dialog = Dialog(context)
         dialog.setContentView(R.layout.dialog_reason)
@@ -110,6 +111,7 @@ class CustomerAdapter(private var bookings: MutableList<Booking>) : RecyclerView
             startDateText
         }
 
+        //Verificar si la reserva fue aceptada o aceptarla y recibir el pago
         if (booking.accepted) {
             holder.checkIcon.setImageResource(R.drawable.baseline_check_circle_outline_30)
             holder.checkIcon.clearColorFilter()

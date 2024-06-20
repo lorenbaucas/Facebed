@@ -44,10 +44,11 @@ class BookActivity : AppCompatActivity() {
         val price = intent.getStringExtra("price")
         val userUid = FirebaseAuth.getInstance().currentUser?.uid
 
-        // Set minimum date to today
+        // El minimo del calendario debe ser el dia actual
         val calendar = Calendar.getInstance()
         this.calendar.setMinimumDate(calendar)
 
+        //Comprobamos las fechas ya reservadas
         val bookingsCollectionRef = FirebaseFirestore.getInstance().collection("Bookings")
         bookingsCollectionRef
             .whereEqualTo("hotelId", hotelId)
@@ -68,7 +69,7 @@ class BookActivity : AppCompatActivity() {
                 this.calendar.setDisabledDays(disabledDates)
             }
 
-
+        //Realizamos la reserva
         acceptButton.setOnClickListener {
             datesList.clear()
             datesList.addAll(this.calendar.selectedDates)

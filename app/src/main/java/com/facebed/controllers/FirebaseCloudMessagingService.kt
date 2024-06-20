@@ -22,6 +22,7 @@ class CloudMessagingService : FirebaseMessagingService() {
         // remoteMessage.data
     }
 
+    //Sirve para generar la notificacion que hayamos creado desde la consola en el firebase cloud messaging
     private fun generateNotification(title: String, message: String) {
         val intent = Intent(this, HomeActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

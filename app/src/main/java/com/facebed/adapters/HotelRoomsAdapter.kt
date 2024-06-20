@@ -28,26 +28,21 @@ class HotelRoomsAdapter(private var rooms: MutableList<SimpleRoom>) : RecyclerVi
     }
 
     override fun onBindViewHolder(holder: RoomViewHolder, position: Int) {
-        val hotel = rooms[position]
-        holder.hotelName.text = hotel.name
-        holder.location.text = hotel.number
+        //Lista de las habitaciones en el hotel de la empresa
+        val room = rooms[position]
+        holder.hotelName.text = room.name
+        holder.location.text = room.number
         Glide.with(holder.itemView.context)
-            .load(hotel.imageUri)
+            .load(room.imageUri)
             .into(holder.imageView)
 
         holder.editIcon.setOnClickListener {
             val intent = Intent(holder.itemView.context, AddRoomActivity::class.java)
-            intent.putExtra("hotelName", hotel.name)
+            intent.putExtra("roomName", room.name)
+            intent.putExtra("number", room.number)
             holder.itemView.context.startActivity(intent)
         }
-
-        /*holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, HotelRoomsActivity::class.java)
-            intent.putExtra("hotelName", hotel.name)
-            holder.itemView.context.startActivity(intent)
-        }*/
     }
 
     override fun getItemCount(): Int = rooms.size
 }
-

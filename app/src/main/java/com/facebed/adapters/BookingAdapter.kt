@@ -40,6 +40,7 @@ class BookingAdapter(private var bookings: MutableList<Booking>, private val sho
 
     override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
         val booking = bookings[position]
+        //Fecha de la reserva
         holder.hotelRoom.text = booking.hotelName + " - " + booking.roomName
 
         val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
@@ -57,6 +58,7 @@ class BookingAdapter(private var bookings: MutableList<Booking>, private val sho
 
         holder.date.text = formattedDateText
 
+        //Muestra las reservas y las que se han cancelado no dejara escribir reseña
         if (showReviewButton) {
             if (booking.reason == null || booking.reason == "") {
                 holder.cancelIcon.visibility = View.GONE
@@ -74,16 +76,30 @@ class BookingAdapter(private var bookings: MutableList<Booking>, private val sho
             holder.cancelIcon.setOnClickListener {
                 val userUid = FirebaseAuth.getInstance().currentUser?.uid
                 if (userUid == booking.userUid) {
-                    FirebaseController.cancelBooking(booking, "Cancelled by user")
-                    bookings.removeAt(position)
-                    notifyItemRemoved(position)
+                    val alertDialogBuilder = AlertDialog.Builder(holder.itemView.context)
+                    alertDialogBuilder
+                        .setMessage(holder.itemView.context.getString(R.string.are_you_sure))
+                        .setCancelable(false)
+                        .setPositiveButton("Sí") { dialog, id ->
+                            FirebaseController.cancelBooking(booking, "Cancelled by user")
+                            bookings.removeAt(position)
+                            notifyItemRemoved(position)
+                        }
+                        .setNegativeButton("No") { dialog, id ->
+                            dialog.dismiss()
+                        }
+
+                    val alertDialog = alertDialogBuilder.create()
+                    alertDialog.show()
                 }
             }
+
         }
     }
 
     override fun getItemCount(): Int = bookings.size
 
+    //Dialogo para escribir la reseña y guardarla en la base de datos
     private fun openReviewDialog(context: Context, booking: Booking) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_review, null)
         val reviewText = dialogView.findViewById<AutoCompleteTextView>(R.id.description_text)
@@ -163,7 +179,7 @@ class BookingAdapter(private var bookings: MutableList<Booking>, private val sho
                     deleteButton.visibility = View.VISIBLE
                     acceptButton.visibility = View.VISIBLE
                     progressBar.visibility = View.GONE
-                    Toast.makeText(context, "Review saved successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.review_saved), Toast.LENGTH_SHORT).show()
                     alertDialog.dismiss()
                 }.addOnFailureListener {
                     deleteButton.visibility = View.VISIBLE

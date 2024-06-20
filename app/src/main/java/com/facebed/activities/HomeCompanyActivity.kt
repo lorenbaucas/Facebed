@@ -17,6 +17,7 @@ class HomeCompanyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
+        //Menu principal con los fragments de la empresa
         homeActivityBinding = HomeActivityBinding.inflate(layoutInflater)
         setContentView(homeActivityBinding.root)
         homeActivityBinding.bottomNavigation.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED

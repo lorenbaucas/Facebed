@@ -51,6 +51,8 @@ class RoomAdapter(private var rooms: MutableList<Room>) : RecyclerView.Adapter<R
         imageUris.clear()
         servicesList.clear()
 
+        //Lista de las habitaciones que se veran en el hotel como usuario, se cargan sus imagenes
+        //sus servicios y el resto de datos
         val roomsCollectionRef = FirebaseFirestore.getInstance().collection("Rooms")
         roomsCollectionRef
             .whereEqualTo("hotelId", room.hotelId)

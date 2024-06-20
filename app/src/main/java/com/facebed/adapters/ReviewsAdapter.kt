@@ -41,6 +41,7 @@ class ReviewsAdapter(private var bookings: MutableList<Booking>, private val sho
         val booking = bookings[position]
         val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
 
+        //Obtenemos los datos de la reseña asociada a esa reserva finalizada
         val reviewsRef = FirebaseFirestore.getInstance().collection("Reviews").document(booking.bookingId)
         reviewsRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
@@ -75,6 +76,7 @@ class ReviewsAdapter(private var bookings: MutableList<Booking>, private val sho
 
     override fun getItemCount(): Int = bookings.size
 
+    //Posibilidad de escribir la reseña o modificarla
     private fun openReviewDialog(context: Context, booking: Booking) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_review, null)
         val reviewText = dialogView.findViewById<AutoCompleteTextView>(R.id.description_text)

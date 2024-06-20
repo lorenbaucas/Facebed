@@ -44,6 +44,7 @@ class HomeCompanyFragment : Fragment() {
         val firestore = FirebaseFirestore.getInstance()
         val hotelsCollectionRef = firestore.collection("Hotels")
 
+        //Mostrara la lista de futuras reservas con posibilidad de cancelarlas o aceptarlas
         hotelsCollectionRef.get().addOnSuccessListener { result ->
             val hotelIds = mutableListOf<String>()
 
@@ -77,6 +78,7 @@ class HomeCompanyFragment : Fragment() {
             }
         }
 
+        //Para filtrar las reservas
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 filterHotels(query)

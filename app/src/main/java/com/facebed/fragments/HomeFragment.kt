@@ -40,6 +40,7 @@ class HomeFragment : Fragment() {
         hotelsAdapter = HotelAdapter(displayedHotels)
         recyclerView.adapter = hotelsAdapter
 
+        //Lista de hoteles con todos sus datos
         val hotelsCollectionRef = FirebaseFirestore.getInstance().collection("Hotels")
         hotelsCollectionRef.get().addOnSuccessListener { querySnapshot ->
             for (documentSnapshot in querySnapshot.documents) {
@@ -63,6 +64,7 @@ class HomeFragment : Fragment() {
             }
         }
 
+        //Para filtrar los hoteles por su nombre
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 filterHotels(query)

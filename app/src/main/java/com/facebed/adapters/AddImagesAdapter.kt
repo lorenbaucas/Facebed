@@ -26,6 +26,7 @@ class AddImagesAdapter(private val imageUris: MutableList<Uri>) : RecyclerView.A
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        //Adaptador de las imagenes que se añaden al crear o modificar hoteles o habitaciones
         val uri = imageUris[position]
         val requestOptions = RequestOptions().transform(CenterCrop(), RoundedCorners(30))
         Glide.with(holder.imageView.context)

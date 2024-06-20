@@ -60,7 +60,7 @@ class RegisterActivity : AppCompatActivity() {
 
         registerButton = findViewById(R.id.register_button)
 
-        // Linear Gradient for the title
+        //Para colorear el titulo
         val appTitle: TextView = findViewById(R.id.app_title)
         Utils.paintTitle(appTitle, "#F66C2C", "#F6A228")
 

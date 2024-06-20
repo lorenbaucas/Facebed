@@ -15,6 +15,7 @@ class FullScreenImageActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.full_screen_image_activity)
 
+        //Nos permitira ver las fotos en pantalla completa y hacerles zoom
         val imageView: PhotoView = findViewById(R.id.image)
         val imageUri = intent.getStringExtra("uri")
 

@@ -50,7 +50,7 @@ class RegisterCompanyActivity : AppCompatActivity() {
         Utils.showPassword(passwordText)
         Utils.showPassword(confirmationText)
 
-        // Linear Gradient for the title
+        //Para colorear el titulo
         val appTitle: TextView = findViewById(R.id.app_title)
         Utils.paintTitle(appTitle, "#0091F1", "#85CAFF")
 

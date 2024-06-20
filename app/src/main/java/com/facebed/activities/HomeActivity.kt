@@ -17,6 +17,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
+        //Menu principal con los fragments de los usuarios
         homeActivityBinding = HomeActivityBinding.inflate(layoutInflater)
         setContentView(homeActivityBinding.root)
         homeActivityBinding.bottomNavigation.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED

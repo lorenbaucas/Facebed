@@ -52,6 +52,8 @@ class HotelViewActivity : AppCompatActivity() {
         rvHotelImages = findViewById(R.id.rv_images)
         rvRooms = findViewById(R.id.rv_rooms)
 
+        averageTextView = findViewById(R.id.stars_text)
+
         rvHotelImages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvHotelServices.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvRooms.layoutManager = LinearLayoutManager(this)
@@ -65,10 +67,8 @@ class HotelViewActivity : AppCompatActivity() {
         val servicesList: MutableList<String> = mutableListOf()
         val roomsList: MutableList<Room> = mutableListOf()
 
+        //Calculamos la media de las reseñas de ese hotel
         val hotelId = intent.getStringExtra("hotelId")
-
-        averageTextView = findViewById(R.id.stars_text)
-
         if (hotelId != null) {
             loadBookingsWithReviews(hotelId) {
                 FirebaseController.calculateReviewsAverage(hotelId) { formattedAverage ->
@@ -77,6 +77,7 @@ class HotelViewActivity : AppCompatActivity() {
             }
         }
 
+        //Cargamos los datos del hotel
         FirebaseFirestore.getInstance().collection("Hotels").document(hotelId!!)
             .get().addOnSuccessListener { documentSnapshot ->
                 val userUid = documentSnapshot.getString("userUid")
@@ -103,6 +104,7 @@ class HotelViewActivity : AppCompatActivity() {
                     }
                 }
 
+                //Fotos del hotel
                 storageRef.listAll().addOnSuccessListener { listResult ->
                     listResult.items.forEachIndexed { index, item ->
                         item.downloadUrl.addOnSuccessListener { uri ->
@@ -123,6 +125,7 @@ class HotelViewActivity : AppCompatActivity() {
                 }
                 val serviceKeys = Utils.getHotelServiceKeys()
 
+                //Servicios del hotel
                 FirebaseController.getHotelServices(userUid!!, hotelId) { documentSnapshot ->
                     documentSnapshot?.data?.forEach { (key, value) ->
                         if (key != "userUid" && key != "hotelId"
@@ -139,6 +142,7 @@ class HotelViewActivity : AppCompatActivity() {
                     rvHotelServices.adapter = servicesAdapter
                 }
 
+                //Lista de habitaciones del hotel
                 FirebaseController.getRooms(hotelId) { documents ->
                     for (documentSnapshot in documents) {
                         val roomName = documentSnapshot.getString("roomName")
@@ -157,6 +161,7 @@ class HotelViewActivity : AppCompatActivity() {
             }
     }
 
+    //Solo se cargaran las reservas de ese hotel que hayan sido finalizadas y tengan una reseña
     private fun loadBookingsWithReviews(hotelId: String, onComplete: () -> Unit) {
         val firestore = FirebaseFirestore.getInstance()
 

@@ -46,16 +46,19 @@ class EventsFragment : Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
                     0 -> {
+                        //El primer menu carga las reservas futuras
                         bookingAdapter = BookingAdapter(bookings, showReviewButton = false)
                         recyclerView.adapter = bookingAdapter
                         loadCurrentBookings()
                     }
                     1 -> {
+                        //El segundo menu carga las reservas finalizadas o canceladas
                         bookingAdapter = BookingAdapter(bookings, showReviewButton = true)
                         recyclerView.adapter = bookingAdapter
                         loadBookingHistory()
                     }
                     2 -> {
+                        //El tercer menu carga las reseñas de las reservas finalizadas
                         reviewsAdapter = ReviewsAdapter(bookingsWithReviews, showButtons = true)
                         recyclerView.adapter = reviewsAdapter
                         loadAllBookingsWithReviews()
@@ -67,7 +70,7 @@ class EventsFragment : Fragment() {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
-        // Load current bookings by default
+        //Por defecto pondra como primer menu el de las futuras reservas
         loadCurrentBookings()
     }
 

@@ -40,6 +40,7 @@ class ReviewsActivity : AppCompatActivity() {
         }
     }
 
+    //Cargamos las reservas que tengan reseñas
     private fun loadBookingsWithReviews(hotelId: String, onComplete: () -> Unit) {
         val firestore = FirebaseFirestore.getInstance()
 

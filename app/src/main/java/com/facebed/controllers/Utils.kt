@@ -16,21 +16,25 @@ import com.facebed.R
 
 class Utils {
     companion object {
+        //Comprueba si el email es valido
         fun isEmailValid(email: String): Boolean {
             val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
             return emailPattern.matches(email)
         }
 
+        //Comprueba si la contraseña es valida
         fun isPasswordValid(password: String): Boolean {
             val passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[._@$!#%^&+=])(?=\\S+\$).{8,}\$".toRegex()
             return passwordPattern.matches(password)
         }
 
+        //Comprueba si el CIF es valido
         fun isFICValid(fic: String): Boolean {
             val ficPattern = "[A-Z][0-9]{8}".toRegex()
             return ficPattern.matches(fic)
         }
 
+        //Para coloear el texto del titulo
         fun paintTitle(title: TextView, startColor: String, endColor: String): TextView {
             val width = title.paint.measureText(title.text.toString())
             val textShader: Shader = LinearGradient(0f, 0f, width, title.textSize, intArrayOf(
@@ -41,6 +45,7 @@ class Utils {
             return title
         }
 
+        //Para mostrar la contraseña
         @SuppressLint("ClickableViewAccessibility")
         fun showPassword(view: AutoCompleteTextView) {
             var isPasswordVisible = false
@@ -64,6 +69,7 @@ class Utils {
             }
         }
 
+        //Para obtener la lista de los servicios del hotel
         fun getHotelServiceKeys(): Map<String, Int> {
             return mapOf(
                 "swimming_pool" to R.string.swimming_pool,
@@ -79,6 +85,7 @@ class Utils {
             )
         }
 
+        //Para obtener la lista de los servicios de la habitacion
         fun getRoomServiceKeys(): Map<String, Int> {
             return mapOf(
                 "hot_tub" to R.string.hot_tub,
@@ -94,10 +101,12 @@ class Utils {
             )
         }
 
+        //Toast que marca un error general
         fun error(context: Context) {
             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
         }
 
+        //Para comprobar si el DNI es valido y posiblemente exista de verdad
         fun isIdValid(id: String): Boolean {
             val idPattern = "^[0-9]{8}[A-Z]$".toRegex()
             if (!idPattern.matches(id)) return false

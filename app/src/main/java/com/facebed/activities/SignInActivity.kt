@@ -74,14 +74,15 @@ class SignInActivity : AppCompatActivity() {
         progressBarGoogle = findViewById(R.id.progress_bar_google)
 
         spSignIn = getSharedPreferences("SignIn", Context.MODE_PRIVATE)
-        // Initialize the credentialManager property
+
+        //Para que nos salga lo de iniciar sesion con Google
         CredentialManagerSingleton.credentialManager = CredentialManager.create(this@SignInActivity)
 
-        // Linear Gradient for the title
+        //Para colorear el titulo
         val appTitle: TextView = findViewById(R.id.app_title)
         Utils.paintTitle(appTitle, "#F66C2C", "#F6A228")
 
-        // Check if user is already signed in
+        //Comprueba si el usuario ya tiene la sesion abierta
         if (spSignIn.getBoolean("isSignedIn", false)) {
             val isCompany = spSignIn.getBoolean("isCompany", false)
             val homeActivityIntent = if (isCompany) {
@@ -90,7 +91,7 @@ class SignInActivity : AppCompatActivity() {
                 Intent(this@SignInActivity, HomeActivity::class.java)
             }
             startActivity(homeActivityIntent)
-            finish() // Finish the SignInActivity to prevent user from going back
+            finish()
         }
 
         Utils.showPassword(passwordText)
@@ -164,18 +165,18 @@ class SignInActivity : AppCompatActivity() {
                 val credential = result.credential
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
 
-                // Get an AuthCredential from the Google ID token
+                //Recoge las credenciales del ID del token
                 val authCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
 
                 spSignIn.edit { putBoolean("googleId", true) }
 
-                // Register credentials in FirebaseAuth
+                //Registra al usuario con esas credenciales
                 FirebaseAuth.getInstance().signInWithCredential(authCredential)
                     .addOnSuccessListener {authResult ->
                     val user = FirebaseAuth.getInstance().currentUser
                     val userId = authResult.user?.uid
                     userId?.let {
-                        // Guarda la información del usuario en la base de datos
+                        //Guarda la informacion del usuario en la base de datos
                         val userData = hashMapOf(
                             "email" to user?.email,
                             "name" to user?.displayName,
@@ -185,7 +186,7 @@ class SignInActivity : AppCompatActivity() {
                         FirebaseFirestore.getInstance().collection("User")
                             .document(userId).set(userData)
                             .addOnSuccessListener {
-                                // Guarda el estado de inicio de sesión
+                                //Guarda el estado de inicio de sesion
                                 spSignIn.edit {
                                     putBoolean("isSignedIn", true)
                                     putBoolean("isCompany", false)
@@ -236,6 +237,8 @@ class SignInActivity : AppCompatActivity() {
                                 userRef.get().addOnSuccessListener { document: DocumentSnapshot ->
                                     val isCompany = document.getBoolean("isCompany")
                                     if (isCompany != null) {
+                                        //Dependiendo de si ese email esta asociado a una empresa o no
+                                        //se va a la actividad correspondiente
                                         if (isCompany) {
                                             startActivity(Intent(this@SignInActivity,
                                                 HomeCompanyActivity::class.java))
@@ -258,6 +261,10 @@ class SignInActivity : AppCompatActivity() {
                                     loadingEmail()
                                 }
                             } else {
+                                //Si no tiene la cuenta verificada se le envia un nuevo
+                                //email para verificarlo y comienza una cuenta regresiva
+                                //que ira en aumentando conforme le de a iniciar sesion y
+                                //aun no tenga el email verificado
                                 user.sendEmailVerification().addOnCompleteListener {
                                     emailSignInButton.visibility = View.GONE
                                     wait.visibility = View.VISIBLE

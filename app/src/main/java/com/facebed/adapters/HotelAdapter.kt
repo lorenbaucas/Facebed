@@ -50,6 +50,7 @@ class HotelAdapter(private var hotels: MutableList<Hotel>) : RecyclerView.Adapte
         imageUris.clear()
         servicesList.clear()
 
+        //Lista de hoteles con sus respectivos datos que se mostraran en diferentes recyclerviews
         val hotelsCollectionRef = FirebaseFirestore.getInstance().collection("Hotels")
         hotelsCollectionRef
             .whereEqualTo("hotelName", hotel.name)

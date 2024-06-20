@@ -110,4 +110,6 @@
     <string name="reason_required">Se necesita una razón</string>
     <string name="search_booking">Nombre/DNI cliente o ID reserva</string>
     <string name="reviews">Reseñas</string>
+    <string name="are_you_sure">¿Estás seguro?</string>
+    <string name="review_saved">Reseña guardada correctamente</string>
 </resources>

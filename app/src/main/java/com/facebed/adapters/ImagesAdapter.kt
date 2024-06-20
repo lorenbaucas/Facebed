@@ -36,6 +36,7 @@ class ImagesAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        //Adaptador de las imagenes
         val uri = imageUris[position]
         val requestOptions = RequestOptions().transform(CenterCrop(), RoundedCorners(30))
         Glide.with(holder.itemView.context)

@@ -33,6 +33,7 @@ class HotelRoomsActivity : AppCompatActivity() {
 
         title.text = intent.getStringExtra("hotelName")
 
+        //Nos llevara para crear una nueva habitacion
         addRoomButton.setOnClickListener {
             startActivity(
                 Intent(this, AddRoomActivity::class.java)
@@ -41,6 +42,7 @@ class HotelRoomsActivity : AppCompatActivity() {
             )
         }
 
+        //Lista de habitaciones con sus datos
         roomList = mutableListOf()
         roomsAdapter = HotelRoomsAdapter(roomList)
         recyclerView.layoutManager = LinearLayoutManager(this)

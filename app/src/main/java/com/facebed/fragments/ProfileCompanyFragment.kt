@@ -107,14 +107,14 @@ class ProfileCompanyFragment : Fragment() {
             walletText.text = earnings.toString()
         }
 
-
+        //Se mostrara la informacion del usuario
         emailText.text = user.email
         editName.setText(user.displayName)
-
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         createdText.text =
             getString(R.string.account_created_on) + " " + sdf.format(Date(user.metadata!!.creationTimestamp))
 
+        //Cambia la foto de perfil
         if (user.photoUrl != null) {
             Glide.with(requireContext())
                 .load(user.photoUrl)
@@ -125,19 +125,21 @@ class ProfileCompanyFragment : Fragment() {
                 .into(profileImage)
         }
 
+        //Para acceder a los ajustes
         settingsButton.setOnClickListener {
             cardViewProfileCompany.visibility = View.GONE
             cardViewSettingsCompany.visibility = View.VISIBLE
         }
 
+        //Para cerrar la sesion
         logoutButton.setOnClickListener {
-            // Sign out from Firebase
             FirebaseAuth.getInstance().signOut()
             spSignIn.edit().clear().apply()
             startActivity(Intent(requireContext(), SignInActivity::class.java))
             requireActivity().finish()
         }
 
+        //Borra la cuenta con un dialogo de confirmacion
         deleteButton.setOnClickListener {
             val dialogView =
                 LayoutInflater.from(requireContext())
@@ -220,6 +222,8 @@ class ProfileCompanyFragment : Fragment() {
             dialog.show()
         }
 
+        //Comprueba los datos cambiados del usuario y si son correctos los actualiza, en este caso
+        //solo se puede modificar el nombre del usuario
         checkButton.setOnClickListener {
             if (editName.text.trim().toString() != user.displayName.toString()) {
                 progressBarSettings.visibility = View.VISIBLE
@@ -263,6 +267,7 @@ class ProfileCompanyFragment : Fragment() {
             }
         }
 
+        //Pide permiso por si cambias la foto de perfil
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -279,6 +284,7 @@ class ProfileCompanyFragment : Fragment() {
             }
         }
 
+        //Para cambiar la foto de perfil
         profileImage.setOnClickListener {
             val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 Manifest.permission.READ_MEDIA_IMAGES
@@ -298,6 +304,7 @@ class ProfileCompanyFragment : Fragment() {
             }
         }
 
+        //Para seleccionar la nueva foto de perfil
         imagePickerLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->

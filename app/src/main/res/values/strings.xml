@@ -110,4 +110,6 @@
     <string name="reason_required">Reason required</string>
     <string name="search_booking">Customer ID/name or booking ID</string>
     <string name="reviews">Reviews</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="review_saved">Review saved successfully</string>
 </resources>
